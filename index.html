@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>논단군 코코포 로그 백업기 (통합본)</title>
+    <title>논단군 코코포 로그 백업기 (정밀 파싱 통합본)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=Hina+Mincho&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -20,9 +20,6 @@
             --text-label: rgba(255, 255, 255, 0.6);
             --accent: #ffffff;
             --accent-soft: rgba(255, 255, 255, 0.1);
-            --success: #e0e0e0;
-            --warn: #aaaaaa;
-            --danger: #ffffff;
 
             --font-serif: "Hina Mincho", "Noto Serif KR", serif;
             --font-sans: "Noto Sans KR", "DM Sans", sans-serif;
@@ -44,270 +41,123 @@
         }
 
         *, *::before, *::after { box-sizing: border-box; }
-
-        html, body {
-            margin: 0; padding: 0; width: 100%;
-            background-color: var(--bg-main);
-        }
-
+        html, body { margin: 0; padding: 0; width: 100%; background-color: var(--bg-main); }
         body {
-            font-family: var(--font-sans);
-            display: flex; flex-direction: column; align-items: center;
-            padding: 40px 16px 80px;
-            -webkit-font-smoothing: antialiased;
-            letter-spacing: -0.01em;
-            color: var(--text-main);
-            min-height: 100vh;
+            font-family: var(--font-sans); display: flex; flex-direction: column; align-items: center;
+            padding: 40px 16px 80px; color: var(--text-main); min-height: 100vh;
+            -webkit-font-smoothing: antialiased; letter-spacing: -0.01em;
         }
 
-        @media (min-width: 640px) { body { padding: 56px 28px 100px; } }
-        @media (min-width: 900px) { body { padding: 64px 40px 100px; } }
-
-        .main-wrapper {
-            width: 100%; max-width: 900px;
-            display: flex; flex-direction: column; gap: 20px;
-        }
-
-        header {
-            border-bottom: 1px solid var(--border-notion);
-            padding-bottom: 24px; text-align: center;
-        }
-
+        .main-wrapper { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 20px; }
+        header { border-bottom: 1px solid var(--border-notion); padding-bottom: 24px; text-align: center; }
         .header-badge {
             display: inline-flex; align-items: center; gap: 6px;
             background: var(--accent-soft); border: 1px solid rgba(255,255,255,0.2);
-            color: var(--text-main); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
-            padding: 3px 10px; border-radius: 0px; margin-bottom: 12px;
-            text-transform: uppercase; font-family: var(--font-ui);
+            color: var(--text-main); font-size: 0.72rem; font-weight: 600; padding: 3px 10px; margin-bottom: 12px;
         }
+        header h1 { font-size: clamp(1.3rem, 4vw, 1.8rem); font-weight: 700; margin: 0 0 6px 0; }
+        header p { margin: 0; font-size: 0.88rem; color: var(--text-muted); }
 
-        header h1 {
-            font-size: clamp(1.3rem, 4vw, 1.8rem); font-weight: 700;
-            color: rgba(255, 255, 255, 0.95); margin: 0 0 6px 0;
-            letter-spacing: -0.025em;
-        }
-
-        header p { margin: 0; font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; }
-
-        .notion-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-notion);
-            border-radius: var(--radius-lg);
-            padding: 20px;
-            width: 100%;
-            transition: border-color 0.2s ease;
-        }
-        @media (min-width: 640px) { .notion-card { padding: 24px 28px; } }
-
-        .card-header {
-            display: flex; align-items: center; gap: 8px;
-            margin-bottom: 18px; padding-bottom: 14px;
-            border-bottom: 1px solid var(--border-notion);
-        }
-
-        .notion-label {
-            font-size: 0.72rem; font-weight: 700;
-            letter-spacing: 0.06em; color: var(--text-label);
-            text-transform: uppercase; font-family: var(--font-ui);
-        }
+        .notion-card { background: var(--bg-card); border: 1px solid var(--border-notion); padding: 20px; width: 100%; }
+        .card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border-notion); }
+        .notion-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; color: var(--text-label); text-transform: uppercase; }
 
         .output-room-title {
-            font-family: var(--current-font); font-size: 1.25rem; font-weight: 700;
+            font-family: var(--current-font); font-size: 1.15rem; font-weight: 700;
             color: var(--title-color) !important; background-color: var(--title-bg) !important;
-            border: 1px solid var(--title-border) !important;
-            margin: 10px 0 14px 0; outline: none;
-            border-radius: var(--radius-md);
-            padding: 13px 16px; text-align: center;
-            cursor: pointer; user-select: none;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
+            border: 1px solid var(--title-border) !important; margin: 10px 0 14px 0;
+            padding: 12px 16px; text-align: center; cursor: pointer; user-select: none;
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .output-room-title:hover { border-color: rgba(255,255,255,0.3) !important; }
-        .output-room-title::after { content: "▾"; font-size: 0.8rem; opacity: 0.5; transition: transform 0.2s; flex-shrink: 0; }
+        .output-room-title::after { content: "▾"; font-size: 0.8rem; opacity: 0.5; transition: transform 0.2s; }
         .output-room-title.is-collapsed::after { transform: rotate(-90deg); }
 
         .grid-config { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
         @media (min-width: 560px) { .grid-config { grid-template-columns: repeat(2, 1fr); } }
 
         .input-group { display: flex; flex-direction: column; gap: 7px; }
-        .input-group > .input-label {
-            font-size: 0.78rem; color: var(--text-label); font-weight: 600;
-            font-family: var(--font-ui); letter-spacing: 0.02em;
-        }
+        .input-group > .input-label { font-size: 0.78rem; color: var(--text-label); font-weight: 600; }
 
         input[type="text"], input[type="file"], input[type="search"] {
-            width: 100%; background-color: var(--bg-input);
-            border: 1px solid var(--border-notion);
-            border-radius: var(--radius-sm); color: var(--text-main);
-            font-size: 0.88rem; padding: 10px 12px; outline: none;
-            transition: border-color 0.18s ease;
-            font-family: var(--font-sans);
+            width: 100%; background-color: var(--bg-input); border: 1px solid var(--border-notion);
+            color: var(--text-main); font-size: 0.88rem; padding: 10px 12px; outline: none;
         }
-        input[type="text"]:focus, input[type="search"]:focus { border-color: var(--border-active); }
-        input[type="file"] { cursor: pointer; }
 
-        .switch-group {
-            display: flex; gap: 6px; background: var(--bg-input); padding: 5px 6px;
-            border-radius: var(--radius-sm); border: 1px solid var(--border-notion);
-            align-items: center; flex-wrap: wrap;
-        }
-        .switch-item {
-            display: flex; align-items: center; gap: 7px;
-            font-size: 0.84rem; cursor: pointer; color: var(--text-main);
-            padding: 6px 10px; border-radius: 0px; white-space: nowrap;
-            transition: background 0.15s ease;
-        }
-        .switch-item:hover { background: rgba(255,255,255,0.05); }
-        .switch-item input[type="radio"] { accent-color: #ffffff; cursor: pointer; }
+        .switch-group { display: flex; gap: 6px; background: var(--bg-input); padding: 5px 6px; border: 1px solid var(--border-notion); align-items: center; flex-wrap: wrap; }
+        .switch-item { display: flex; align-items: center; gap: 7px; font-size: 0.84rem; cursor: pointer; padding: 6px 10px; }
 
-        .color-picker-panel {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 8px; background: var(--bg-input); padding: 12px;
-            border-radius: var(--radius-sm); border: 1px solid var(--border-notion);
-            max-height: 180px; overflow-y: auto;
-        }
-        .color-picker-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 0px; border: 1px solid rgba(255,255,255,0.05); }
-        .color-picker-item span { font-size: 0.83rem; color: var(--text-main); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 110px; }
-        .color-picker-item input[type="color"] { border: none; width: 26px; height: 26px; border-radius: 0px; cursor: pointer; background: transparent; padding: 0; }
+        .color-picker-panel { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; background: var(--bg-input); padding: 12px; border: 1px solid var(--border-notion); max-height: 180px; overflow-y: auto; }
+        .color-picker-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); padding: 6px 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .color-picker-item span { font-size: 0.83rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 110px; }
+        .color-picker-item input[type="color"] { border: none; width: 26px; height: 26px; cursor: pointer; background: transparent; padding: 0; }
 
         .filter-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 4px; }
-        .filter-item { display: flex; align-items: center; gap: 7px; font-size: 0.84rem; cursor: pointer; color: var(--text-main); padding: 5px 8px; border-radius: 0px; border: 1px solid var(--border-notion); background: var(--bg-input); transition: border-color 0.15s; }
-        .filter-item:hover { border-color: var(--border-active); }
+        .filter-item { display: flex; align-items: center; gap: 7px; font-size: 0.84rem; cursor: pointer; padding: 5px 8px; border: 1px solid var(--border-notion); background: var(--bg-input); }
 
         .btn-group { display: flex; gap: 8px; width: 100%; flex-wrap: wrap; }
-        .notion-btn {
-            background: none; border: 1px solid var(--border-notion); color: var(--text-main);
-            border-radius: var(--radius-sm); cursor: pointer; padding: 11px 16px;
-            font-size: 0.85rem; transition: background 0.18s, border-color 0.18s;
-            font-weight: 600; font-family: var(--font-ui);
-            white-space: nowrap;
-        }
-        .notion-btn:hover { border-color: var(--border-active); background: rgba(255,255,255,0.05); }
-        .btn-submit { background: var(--accent-soft); border-color: rgba(255,255,255,0.2); color: #ffffff; flex: 2; min-width: 100px; }
-        .btn-submit:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
+        .notion-btn { background: none; border: 1px solid var(--border-notion); color: var(--text-main); cursor: pointer; padding: 11px 16px; font-size: 0.85rem; font-weight: 600; }
+        .btn-submit { background: var(--accent-soft); border-color: rgba(255,255,255,0.2); flex: 2; min-width: 100px; }
         .btn-util { flex: 1; min-width: 80px; }
 
-        .spell-report-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-lg); padding: 18px 20px; display: none; }
-        .spell-report-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 10px; gap: 12px; flex-wrap: wrap; }
-        .spell-report-meta { display: flex; flex-direction: column; gap: 2px; }
-        .spell-report-title { font-size: 0.88rem; font-weight: 700; color: var(--text-main); }
-        .spell-report-sub { font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-ui); }
-        .spell-report-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-        .spell-btn-all { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; border-radius: var(--radius-sm); padding: 6px 14px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: var(--font-ui); }
-        .spell-btn-all:hover { background: rgba(255,255,255,0.2); }
-        .spell-btn-dismiss { background: none; border: 1px solid var(--border-notion); color: var(--text-muted); border-radius: var(--radius-sm); padding: 6px 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: var(--font-ui); }
-        .spell-btn-dismiss:hover { background: rgba(255,255,255,0.05); }
-        .spell-summary-bar { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
-        .spell-summary-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--bg-input); border: 1px solid var(--border-notion); padding: 3px 10px; font-size: 0.74rem; color: var(--text-label); font-family: var(--font-ui); }
-        .spell-summary-chip .chip-count { font-weight: 700; color: #ffffff; }
-        
-        .spell-report-list { max-height: 320px; overflow-y: auto; font-size: 0.82rem; display: flex; flex-direction: column; gap: 7px; }
-        .spell-report-item { display: flex; align-items: flex-start; justify-content: space-between; padding: 11px 14px; background: var(--bg-input); border-radius: var(--radius-sm); border: 1px solid var(--border-notion); gap: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
-        .spell-report-item:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.03); }
-        .spell-report-item.is-fixed { opacity: 0.35; pointer-events: none; }
-        .spell-context-box { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-        .spell-meta-tag { font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-ui); font-weight: 600; letter-spacing: 0.03em; }
-        .spell-context-text { line-height: 1.55; color: var(--text-main); }
-        .spell-fix-trigger { background: var(--accent-soft); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; border-radius: var(--radius-sm); padding: 5px 12px; font-size: 0.76rem; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: var(--font-ui); flex-shrink: 0; white-space: nowrap; }
-        .spell-fix-trigger:hover { background: rgba(255,255,255,0.25); }
+        .spell-report-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.2); padding: 18px 20px; display: none; }
+        .spell-report-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 10px; }
+        .spell-report-title { font-size: 0.88rem; font-weight: 700; }
+        .spell-report-actions { display: flex; gap: 6px; }
+        .spell-btn-all { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 14px; font-size: 0.78rem; cursor: pointer; }
+        .spell-report-list { max-height: 220px; overflow-y: auto; font-size: 0.82rem; display: flex; flex-direction: column; gap: 7px; }
+        .spell-report-item { display: flex; align-items: flex-start; justify-content: space-between; padding: 10px; background: var(--bg-input); border: 1px solid var(--border-notion); }
+        .spell-fix-trigger { background: var(--accent-soft); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 4px 10px; font-size: 0.74rem; cursor: pointer; }
 
-        .script-container {
-            display: flex; flex-direction: column; gap: 1px;
-            background-color: var(--script-bg); padding: 16px; border-radius: var(--radius-md);
-            border: 1px solid var(--script-border);
-            width: 100%; overflow-x: hidden; transition: all 0.3s ease;
-        }
+        .script-container { display: flex; flex-direction: column; gap: 1px; background-color: var(--script-bg); padding: 16px; border: 1px solid var(--script-border); width: 100%; }
         .script-container.collapsed { display: none !important; }
 
-        .notion-row { 
-            display: flex; align-items: center; justify-content: space-between; gap: 12px; 
-            padding: 5px 8px; border-radius: var(--radius-sm); position: relative;
-            transition: background-color 0.15s ease; width: 100%;
-        }
+        .notion-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 8px; position: relative; width: 100%; }
         .notion-row.filtered-out { display: none !important; }
         .notion-row:hover { background: rgba(255, 255, 255, 0.04); }
-        .notion-row.row-flash { background-color: rgba(255,255,255,0.15) !important; }
 
         .content-cell { display: flex; align-items: flex-start; gap: 10px; flex: 1; width: 100%; overflow: hidden; }
-        
-        .notion-block {
-            flex: 1; padding: 1px 4px; border-radius: 0px; font-size: 0.95rem; line-height: 1.55; 
-            word-break: break-word; outline: none; color: var(--script-text) !important; white-space: pre-wrap;
-            font-family: var(--current-font); width: 100%;
-        }
+        .notion-block { flex: 1; padding: 1px 4px; font-size: 0.95rem; line-height: 1.55; word-break: break-word; outline: none; color: var(--script-text) !important; white-space: pre-wrap; font-family: var(--current-font); width: 100%; }
 
-        .control-cell { opacity: 0; transition: opacity 0.15s ease; flex-shrink: 0; position: absolute; right: 8px; top: 6px; z-index: 5; }
+        .control-cell { opacity: 0; transition: opacity 0.15s ease; position: absolute; right: 8px; top: 6px; z-index: 5; }
         .notion-row:hover .control-cell { opacity: 1; }
-        .row-control { 
-            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); 
-            color: #ffffff; cursor: pointer; font-size: 0.7rem; font-weight: bold; 
-            padding: 2px 7px; border-radius: 0px; transition: 0.15s;
-        }
-        .row-control:hover { background: #ffffff; color: #000000; border-color: #ffffff; }
+        .row-control { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-size: 0.7rem; padding: 2px 7px; }
 
-        .notion-block b { font-weight: bold; }
-        .notion-block i { font-style: italic; }
-        .notion-block s { text-decoration: line-through; }
-        
-        .notion-block mark.hl-yellow { background-color: #e0e0e0 !important; color: #000000 !important; padding: 0 2px; }
-        .notion-block mark.hl-green { background-color: #c0c0c0 !important; color: #000000 !important; padding: 0 2px; }
-        .notion-block mark.hl-blue { background-color: #a0a0a0 !important; color: #000000 !important; padding: 0 2px; }
-        .notion-block mark.hl-pink { background-color: #808080 !important; color: #ffffff !important; padding: 0 2px; }
-
-        #textStyler {
-            position: absolute; display: none;
-            background: #222222; border: 1px solid rgba(255,255,255,0.15);
-            border-radius: var(--radius-sm); box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-            z-index: 9999; padding: 5px 8px; gap: 4px; align-items: center;
-        }
-        #textStyler button { background: none; border: none; color: #fff; font-size: 0.82rem; padding: 3px 7px; cursor: pointer; font-weight: 600; transition: background 0.1s; }
-        #textStyler button:hover { background: rgba(255,255,255,0.1); }
-        .styler-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.12); }
-        .color-chip { width: 15px; height: 15px; cursor: pointer; display: inline-block; border: 1px solid rgba(255, 255, 255, 0.3); transition: transform 0.1s; }
-        .color-chip:hover { transform: scale(1.15); }
-
-        .floating-history-panel {
-            position: fixed; bottom: 20px; right: 20px;
-            background: rgba(26, 26, 26, 0.9); backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-md);
-            padding: 5px 10px; display: flex; gap: 2px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); z-index: 10000;
-        }
-        .history-btn { background: none; border: none; color: rgba(255, 255, 255, 0.8); font-size: 0.83rem; font-weight: 600; padding: 7px 12px; cursor: pointer; transition: background 0.15s; font-family: var(--font-ui); }
-        .history-btn:hover:not(:disabled) { background: rgba(255,255,255,0.08); }
+        .floating-history-panel { position: fixed; bottom: 20px; right: 20px; background: rgba(26, 26, 26, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); padding: 5px 10px; display: flex; gap: 2px; z-index: 10000; }
+        .history-btn { background: none; border: none; color: rgba(255, 255, 255, 0.8); font-size: 0.83rem; padding: 7px 12px; cursor: pointer; }
         .history-btn:disabled { opacity: 0.25; cursor: not-allowed; }
-        .btn-scroll-top { border-left: 1px solid rgba(255,255,255,0.15); margin-left: 2px; padding-left: 14px; }
         
-        .char-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 2px; display: block; font-family: var(--font-ui); }
-        .state-narrator { text-align: center; font-weight: 700; font-style: italic; color: var(--script-narrator) !important; width: 100%; margin: 2px 0; padding: 2px 10px; font-size: 0.95rem; }
-        .state-system { font-family: var(--font-ui); font-size: 0.85rem; color: var(--script-sys) !important; }
-        .character-divider { border-top: 1px solid rgba(255, 255, 255, 0.05); margin: 4px 0 2px 0; width: 100%; }
+        /* Roll20 스타일을 반영한 전형적인 이름:대사 구조 포맷팅 */
+        .msg-line { display: block; width: 100%; }
+        .char-name { font-weight: 700; font-size: 0.95rem; margin-right: 6px; display: inline; }
+        .char-msg { display: inline; }
+        
+        /* 시스템 및 서술자 고유 스타일 */
+        .state-narrator { text-align: left; font-weight: 500; color: var(--script-narrator) !important; width: 100%; }
+        .state-system { font-size: 0.88rem; color: var(--script-sys) !important; font-style: italic; opacity: 0.8; }
 
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+        #textStyler { position: absolute; display: none; background: #222222; border: 1px solid rgba(255,255,255,0.15); z-index: 9999; padding: 5px 8px; gap: 4px; align-items: center; }
+        #textStyler button { background: none; border: none; color: #fff; font-size: 0.82rem; padding: 3px 7px; cursor: pointer; }
+        .color-chip { width: 15px; height: 15px; cursor: pointer; display: inline-block; border: 1px solid rgba(255, 255, 255, 0.3); }
     </style>
 </head>
 <body>
 
     <div class="main-wrapper">
         <header>
-            <div class="header-badge">TRPG 로그 백업기</div>
+            <div class="header-badge">TRPG 로그 백업기 v2</div>
             <h1>논단군 코코포 로그 백업기</h1>
-            <p>직관적이고 편한 로그 백업기 (이름 분리 정밀화 버전)</p>
+            <p>Roll20 형태의 [이름: 대사] 양식 및 시스템 메세지 필터링 완벽 지원</p>
         </header>
 
         <div class="notion-card">
-            <div class="card-header">
-                <div class="notion-label">설정 센터</div>
-            </div>
+            <div class="card-header"><div class="notion-label">설정 센터</div></div>
             <div class="grid-config">
                 <div class="input-group">
                     <span class="input-label">1. 로그 파일 업로드 (.html)</span>
                     <input id="logFile" type="file" accept=".html">
                 </div>
                 <div class="input-group">
-                    <span class="input-label">2. 서술자 이름 지정</span>
+                    <span class="input-label">2. 서술자 이름 지정 (선택)</span>
                     <input id="narratorName" type="text" placeholder="진행 캐릭터 이름 입력">
                 </div>
             </div>
@@ -329,7 +179,7 @@
             </div>
             <div class="grid-config">
                 <div class="input-group" style="grid-column: span 2;">
-                    <span class="input-label">5. 맞춤법 교정</span>
+                    <span class="input-label">5. 맞춤법 교정 연동</span>
                     <div class="switch-group">
                         <label class="switch-item"><input type="radio" name="spellCheckToggle" value="off" checked> 끄기</label>
                         <label class="switch-item"><input type="radio" name="spellCheckToggle" value="on"> 켜기</label>
@@ -339,37 +189,33 @@
             <div class="input-group" style="margin-top: 10px;">
                 <span class="input-label">6. 캐릭터별 개별 색상 지정</span>
                 <div id="characterColorPanel" class="color-picker-panel">
-                    <span style="color: var(--text-muted); font-size: 0.83rem;">파일을 업로드하면 캐릭터명이 표시됩니다.</span>
+                    <span style="color: var(--text-muted); font-size: 0.83rem;">파일을 업로드하면 캐릭터 목록이 나타납니다.</span>
                 </div>
             </div>
             <div class="input-group" style="margin-top: 10px;">
-                <span class="input-label">7. 탭 필터링</span>
+                <span class="input-label">7. 대화 탭 필터링</span>
                 <div id="dynamicFilters" class="filter-container"></div>
             </div>
             <div class="input-group" style="margin-top: 14px;">
                 <span class="input-label">로그 내용 실시간 검색</span>
-                <input id="logSearchInput" type="search" placeholder="원하는 단어를 입력하세요...">
+                <input id="logSearchInput" type="search" placeholder="검색할 단어 입력...">
             </div>
         </div>
 
         <div class="btn-group">
-            <button id="btnProcess" class="notion-btn btn-submit">실행</button>
+            <button id="btnProcess" class="notion-btn btn-submit">실행 및 변환</button>
             <button id="btnCopy" class="notion-btn btn-util">코드 복사</button>
             <button id="btnDownload" class="notion-btn btn-util">파일 저장</button>
         </div>
 
         <div id="spellReportCard" class="spell-report-card">
             <div class="spell-report-header">
-                <div class="spell-report-meta">
-                    <div class="spell-report-title">맞춤법 교정 리포트</div>
-                    <div class="spell-report-sub">TRPG 세션 특화 엔진</div>
-                </div>
+                <div class="spell-report-title">맞춤법 실시간 교정 리포트</div>
                 <div class="spell-report-actions">
                     <button id="btnSpellFixAll" class="spell-btn-all">모두 교정</button>
-                    <button id="btnSpellDismiss" class="spell-btn-dismiss">닫기</button>
+                    <button id="btnSpellDismiss" class="spell-btn-all" style="background:none; border:1px solid var(--border-notion);">닫기</button>
                 </div>
             </div>
-            <div class="spell-summary-bar" id="spellSummaryBar"></div>
             <div id="spellReportList" class="spell-report-list"></div>
         </div>
 
@@ -380,58 +226,33 @@
         <button data-cmd="bold"><b>B</b></button>
         <button data-cmd="italic"><i>I</i></button>
         <button data-cmd="strikeThrough"><s>S</s></button>
-        <div class="styler-divider"></div>
-        <span class="color-chip chip-yellow" style="background:#e0e0e0" data-cmd="hl-yellow"></span>
-        <span class="color-chip chip-green" style="background:#c0c0c0" data-cmd="hl-green"></span>
-        <span class="color-chip chip-blue" style="background:#a0a0a0" data-cmd="hl-blue"></span>
-        <span class="color-chip chip-pink" style="background:#808080" data-cmd="hl-pink"></span>
     </div>
 
     <div class="floating-history-panel">
         <button id="btnUndo" class="history-btn" disabled>뒤로</button>
         <button id="btnRedo" class="history-btn" disabled>앞으로</button>
-        <button id="btnScrollTop" class="history-btn btn-scroll-top">↑ Top</button>
     </div>
 
     <script>
-        let rawLogData = [];
+        let parsedLogs = [];
         let detectedTabs = new Set();
-        let detectedCharacters = new Set(); 
-        let currentFontType = "sans"; 
-        let currentColorTheme = "ccfolia"; 
+        let detectedCharacters = new Set();
+        let currentFontType = "sans";
+        let currentColorTheme = "ccfolia";
         let undoStack = [];
         let redoStack = [];
-        let isHistoryAction = false; 
         let globalRoomTitle = "세션 로그";
 
-        const spellRules = [
-            { wrong: /됬됐다/g, right: "됐다", cat: "맞춤법" },
-            { wrong: /됬어/g, right: "됐어", cat: "맞춤법" },
-            { wrong: /됬/g, right: "됐", cat: "맞춤법" },
-            { wrong: /되었다/g, right: "됐다", cat: "맞춤법" },
-            { wrong: /되었어/g, right: "됐어", cat: "맞춤법" },
-            { wrong: /됬음/g, right: "됐음", cat: "맞춤법" },
-            { wrong: /됬다/g, right: "됐다", cat: "맞춤법" },
-            { wrong: /않하고/g, right: "안 하고", cat: "맞춤법" },
-            { wrong: /않돼/g, right: "안 돼", cat: "맞춤법" },
-            { wrong: /않해/g, right: "안 해", cat: "맞춤법" },
-            { wrong: /안되나요/g, right: "안 되나요", cat: "띄어쓰기" },
-            { wrong: /안된다/g, right: "안 된다", cat: "띄어쓰기" },
-            { wrong: /어의없/g, right: "어처구니없", cat: "맞춤법" },
-            { wrong: /바램/g, right: "바람", cat: "맞춤법" },
-            { wrong: /구지/g, right: "굳이", cat: "맞춤법" },
-            { wrong: /역활/g, right: "역할", cat: "맞춤법" },
-            { wrong: /괞찮/g, right: "괜찮", cat: "맞춤법" },
-            { wrong: /몇일/g, right: "며칠", cat: "맞춤법" },
-            { wrong: /할거야/g, right: "할 거야", cat: "띄어쓰기" },
-            { wrong: /할수있다/g, right: "할 수 있다", cat: "띄어쓰기" },
-            { wrong: /케릭터/g, right: "캐릭터", cat: "맞춤법" }
-        ];
-
         const themeProfiles = {
-            roll20: { bg: "#ffffff", text: "#111111", fallbackName: "#333333", narrator: "#000000", sys: "#666666", border: "#e0e0e0", title: "#111111", titleBg: "#ffffff", titleBorder: "rgba(0,0,0,0.15)" },
-            ccfolia: { bg: "#111111", text: "#ffffff", fallbackName: "#cccccc", narrator: "#e0e0e0", sys: "#888888", border: "#222222", title: "#ffffff", titleBg: "#222222", titleBorder: "rgba(255,255,255,0.15)" }
+            roll20: { bg: "#ffffff", text: "#111111", narrator: "#000000", sys: "#777777", border: "#e5e5e5", title: "#111111", titleBg: "#f5f5f5", titleBorder: "rgba(0,0,0,0.15)" },
+            ccfolia: { bg: "#111111", text: "#ffffff", narrator: "#e0e0e0", sys: "#888888", border: "#222222", title: "#ffffff", titleBg: "#222222", titleBorder: "rgba(255,255,255,0.15)" }
         };
+
+        const spellRules = [
+            { wrong: /됬/g, right: "됐" }, { wrong: /되었다/g, right: "됐다" }, { wrong: /되었어/g, right: "됐어" },
+            { wrong: /않하고/g, right: "안 하고" }, { wrong: /않돼/g, right: "안 돼" }, { wrong: /구지/g, right: "굳이" },
+            { wrong: /역활/g, right: "역할" }, { wrong: /몇일/g, right: "며칠" }, { wrong: /케릭터/g, right: "캐릭터" }
+        ];
 
         function applyColorTheme(themeName) {
             currentColorTheme = themeName;
@@ -447,72 +268,95 @@
             root.style.setProperty('--title-border', p.titleBorder);
         }
 
-        document.querySelectorAll('input[name="colorTheme"]').forEach(radio => {
-            radio.addEventListener('change', (e) => { applyColorTheme(e.target.value); });
+        document.querySelectorAll('input[name="colorTheme"]').forEach(r => {
+            r.addEventListener('change', (e) => applyColorTheme(e.target.value));
         });
-        applyColorTheme("ccfolia"); 
 
-        document.querySelectorAll('input[name="fontPreset"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
+        document.querySelectorAll('input[name="fontPreset"]').forEach(r => {
+            r.addEventListener('change', (e) => {
                 currentFontType = e.target.value;
-                const fontValue = currentFontType === "serif" ? "var(--font-serif)" : "var(--font-sans)";
-                document.documentElement.style.setProperty('--current-font', fontValue);
+                document.documentElement.style.setProperty('--current-font', currentFontType === "serif" ? "var(--font-serif)" : "var(--font-sans)");
             });
         });
 
-        document.getElementById('btnScrollTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
+        // 파일 정밀 파싱 엔진
         document.getElementById('logFile').addEventListener('change', (e) => {
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(event) {
-                const parser = new DOMParser(); 
+                const parser = new DOMParser();
                 const doc = parser.parseFromString(event.target.result, 'text/html');
                 globalRoomTitle = file.name.replace(/\.html$/i, "").trim();
-                
-                let lines = doc.querySelectorAll('p, .msg, .chat-line, div');
-                rawLogData = []; detectedTabs.clear(); detectedCharacters.clear();
-                
-                lines.forEach(p => {
-                    if (p.children.length > 0 && p.querySelector('p')) return; 
-                    const text = p.innerText ? p.innerText.trim() : p.textContent.trim();
-                    if(!text) return;
 
-                    // 이름 : 대사 매칭 정규식 최적화 및 공백 유연성 확보
-                    const tabMatch = text.match(/^\[([^\]]+)\]\s*([^:]+)\s*:\s*([\s\S]*)$/);
-                    if (tabMatch) {
-                        let tabName = tabMatch[1].trim(); 
-                        let charName = tabMatch[2].trim(); 
-                        let msgBody = tabMatch[3].trim();
-                        detectedTabs.add(tabName); detectedCharacters.add(charName);
-                        rawLogData.push({ tab: tabName, name: charName, message: msgBody });
+                parsedLogs = []; detectedTabs.clear(); detectedCharacters.clear();
+
+                // 코코포리아 특유의 p 태그 내부 구조 순회
+                const pElements = doc.querySelectorAll('p');
+                pElements.forEach(p => {
+                    // [대화탭] 영역 파싱
+                    let tabName = "Main";
+                    const tabSpan = p.querySelector('span[style*="secondary"], span:first-child');
+                    let textContent = p.innerText || p.textContent;
+                    
+                    if (tabSpan && tabSpan.innerText.startsWith('[') && tabSpan.innerText.endsWith(']')) {
+                        tabName = tabSpan.innerText.replace(/[\[\]]/g, '').trim();
                     } else {
-                        const simpleMatch = text.match(/^([^:]+)\s*:\s*([\s\S]*)$/);
-                        if(simpleMatch) {
-                            let charName = simpleMatch[1].trim(); 
-                            let msgBody = simpleMatch[2].trim();
-                            // 만약 이름 부분에 시스템 컴포넌트 성격이 강하면 시스템으로 우회
-                            if (charName.includes('\n') || charName.length > 20) {
-                                rawLogData.push({ tab: "시스템", name: "", message: text });
-                            } else {
-                                detectedTabs.add("Main"); detectedCharacters.add(charName);
-                                rawLogData.push({ tab: "Main", name: charName, message: msgBody });
-                            }
+                        const tabMatch = textContent.match(/^\[([^\]]+)\]/);
+                        if (tabMatch) tabName = tabMatch[1].trim();
+                    }
+
+                    // 이름 및 대사 분리 기법 (코코포리아 표준 태그 구조 추적)
+                    const boldNameEl = p.querySelector('strong, b');
+                    let charName = "";
+                    let messageText = "";
+
+                    if (boldNameEl) {
+                        // <b> 태그나 <strong> 태그가 존재하는 정상 대화 로그
+                        charName = boldNameEl.innerText.replace(/[\s:]+$/, "").trim();
+                        
+                        // 이름 구조 뒤에 오는 순수 대사 텍스트 추출
+                        let node = boldNameEl.nextSibling;
+                        let parts = [];
+                        while(node) {
+                            parts.push(node.textContent);
+                            node = node.nextSibling;
+                        }
+                        messageText = parts.join("").replace(/^\s*:\s*/, "").trim();
+                    } else {
+                        // 구조가 깨졌거나 시스템 메세지인 경우 정규식 2차 필터링
+                        const fallbackMatch = textContent.match(/^(\[[^\]]+\])?\s*([^:]+)\s*:\s*([\s\S]*)$/);
+                        if (fallbackMatch) {
+                            charName = fallbackMatch[2].trim();
+                            messageText = fallbackMatch[3].trim();
                         } else {
-                            rawLogData.push({ tab: "시스템", name: "", message: text });
+                            // 콜론(:) 조차 없는 문장은 캐릭터가 아닌 완전히 '시스템 메세지'로 우회 처리
+                            charName = "";
+                            messageText = textContent.replace(/^\[[^\]]+\]\s*/, "").trim();
                         }
                     }
+
+                    // 최종 정제 및 검증 작업
+                    if (!charName || charName.length > 25 || charName.includes('\n')) {
+                        // 이름이 너무 길거나 비정상적이면 시스템 메시지로 분류
+                        parsedLogs.push({ tab: "시스템", name: "", message: textContent.trim() });
+                    } else {
+                        detectedTabs.add(tabName);
+                        detectedCharacters.add(charName);
+                        parsedLogs.push({ tab: tabName, name: charName, message: messageText });
+                    }
                 });
-                buildFilters(); buildCharacterColorPicker();
+
+                buildFilters();
+                buildCharacterColorPicker();
             };
             reader.readAsText(file, 'UTF-8');
         });
 
         function buildFilters() {
             const container = document.getElementById('dynamicFilters'); container.innerHTML = "";
-            const sortedTabs = Array.from(detectedTabs).sort();
-            if(sortedTabs.length === 0) sortedTabs.push("Main");
-            sortedTabs.forEach(tab => {
+            const tabs = Array.from(detectedTabs).sort();
+            if(tabs.length === 0) tabs.push("Main");
+            tabs.forEach(tab => {
                 const label = document.createElement('label'); label.className = "filter-item";
                 label.innerHTML = `<input type="checkbox" class="tab-chk" value="${tab}" checked> <span>${tab}</span>`;
                 container.appendChild(label);
@@ -521,255 +365,220 @@
 
         function buildCharacterColorPicker() {
             const panel = document.getElementById('characterColorPanel'); panel.innerHTML = "";
-            const p = themeProfiles[currentColorTheme]; const sortedChars = Array.from(detectedCharacters).sort();
-            if(sortedChars.length === 0) {
-                panel.innerHTML = `<span style="color: var(--text-muted); font-size: 0.85rem;">추출된 캐릭터가 없습니다.</span>`; return;
+            const chars = Array.from(detectedCharacters).sort();
+            if(chars.length === 0) {
+                panel.innerHTML = `<span style="color: var(--text-muted); font-size: 0.83rem;">추출된 일반 캐릭터가 없습니다.</span>`; return;
             }
-            sortedChars.forEach(char => {
+            chars.forEach(char => {
                 const item = document.createElement('div'); item.className = "color-picker-item";
-                item.innerHTML = `<span title="${char}">${char}</span><input type="color" class="char-color-input" data-char="${char}" value="${currentColorTheme === 'roll20' ? '#111111' : '#cccccc'}">`;
+                item.innerHTML = `<span title="${char}">${char}</span><input type="color" class="char-color-input" data-char="${char}" value="${currentColorTheme === 'roll20' ? '#111111' : '#ffffff'}">`;
                 panel.appendChild(item);
             });
         }
 
         function getCharacterColorMap() {
-            const map = {}; document.querySelectorAll('.char-color-input').forEach(input => { map[input.dataset.char] = input.value; }); return map;
+            const map = {}; document.querySelectorAll('.char-color-input').forEach(i => { map[i.dataset.char] = i.value; }); return map;
         }
 
         function saveHistoryState() {
-            if (isHistoryAction) return;
-            undoStack.push({ tabsHTML: document.getElementById('dynamicTabsOutput').innerHTML }); redoStack = []; updateHistoryButtons();
-        }
-
-        function updateHistoryButtons() {
-            document.getElementById('btnUndo').disabled = undoStack.length === 0;
-            document.getElementById('btnRedo').disabled = redoStack.length === 0;
+            undoStack.push({ html: document.getElementById('dynamicTabsOutput').innerHTML });
+            redoStack = []; document.getElementById('btnUndo').disabled = false; document.getElementById('btnRedo').disabled = true;
         }
 
         document.getElementById('btnUndo').addEventListener('click', () => {
-            if (undoStack.length === 0) return;
-            redoStack.push({ tabsHTML: document.getElementById('dynamicTabsOutput').innerHTML });
-            const prev = undoStack.pop(); restoreState(prev); updateHistoryButtons();
+            if(undoStack.length === 0) return;
+            redoStack.push({ html: document.getElementById('dynamicTabsOutput').innerHTML });
+            document.getElementById('dynamicTabsOutput').innerHTML = undoStack.pop().html;
+            document.getElementById('btnUndo').disabled = undoStack.length === 0;
+            document.getElementById('btnRedo').disabled = false;
+            attachAccordionEvents();
         });
 
         document.getElementById('btnRedo').addEventListener('click', () => {
-            if (redoStack.length === 0) return;
-            undoStack.push({ tabsHTML: document.getElementById('dynamicTabsOutput').innerHTML });
-            const next = redoStack.pop(); restoreState(next); updateHistoryButtons();
+            if(redoStack.length === 0) return;
+            undoStack.push({ html: document.getElementById('dynamicTabsOutput').innerHTML });
+            document.getElementById('dynamicTabsOutput').innerHTML = redoStack.pop().html;
+            document.getElementById('btnRedo').disabled = redoStack.length === 0;
+            document.getElementById('btnUndo').disabled = false;
+            attachAccordionEvents();
         });
-
-        function restoreState(state) {
-            isHistoryAction = true; document.getElementById('dynamicTabsOutput').innerHTML = state.tabsHTML;
-            attachAccordionEvents(); isHistoryAction = false;
-        }
 
         function attachAccordionEvents() {
             document.querySelectorAll('.output-room-title').forEach(title => {
                 title.onclick = function() {
                     const container = this.nextElementSibling;
-                    if (container && container.classList.contains('script-container')) {
-                        container.classList.toggle('collapsed');
-                        this.classList.toggle('is-collapsed', container.classList.contains('collapsed'));
-                    }
+                    container.classList.toggle('collapsed');
+                    this.classList.toggle('is-collapsed', container.classList.contains('collapsed'));
                 };
             });
         }
 
+        // 실행 및 뷰 빌드 함수
         document.getElementById('btnProcess').addEventListener('click', () => {
-            if(rawLogData.length === 0) return alert('파일을 업로드하세요.');
-            undoStack = []; redoStack = []; updateHistoryButtons();
+            if(parsedLogs.length === 0) return alert('파일을 먼저 업로드해 주세요.');
             
             const narrator = document.getElementById('narratorName').value.trim();
             const charColorMap = getCharacterColorMap();
             const selectedTabs = Array.from(document.querySelectorAll('.tab-chk:checked')).map(c => c.value);
-            
             if(selectedTabs.length === 0) selectedTabs.push("Main");
 
-            const dynamicTabsOutput = document.getElementById('dynamicTabsOutput');
-            dynamicTabsOutput.innerHTML = ""; const tabContainers = {}; const tabLastSpeakerType = {}; 
+            const outputArea = document.getElementById('dynamicTabsOutput');
+            outputArea.innerHTML = "";
 
+            const containers = {};
             selectedTabs.forEach(t => {
                 const card = document.createElement('div'); card.className = "notion-card";
                 card.innerHTML = `
-                    <div class="notion-label">세션 로그 채널 — [${t}]</div>
+                    <div class="notion-label">채널 — [${t}]</div>
                     <h2 class="output-room-title">${globalRoomTitle} - ${t}</h2>
                     <div class="script-container"></div>
                 `;
-                dynamicTabsOutput.appendChild(card);
-                tabContainers[t] = card.querySelector('.script-container'); tabLastSpeakerType[t] = "";
+                outputArea.appendChild(card);
+                containers[t] = card.querySelector('.script-container');
             });
 
-            const p = themeProfiles[currentColorTheme];
-            
-            rawLogData.forEach(log => {
-                let currentTargetTab = log.tab;
-                if(log.tab === "시스템") { currentTargetTab = selectedTabs[0] || "Main"; }
-                if(!tabContainers[currentTargetTab]) return;
-                
-                const targetContainer = tabContainers[currentTargetTab];
-                const isNarr = narrator && log.name === narrator; const isSys = log.name === "";
-                const currentType = isSys ? "__SYS__" : (isNarr ? "__NARR__" : log.name);
-                const lastType = tabLastSpeakerType[currentTargetTab];
+            parsedLogs.forEach(log => {
+                let targetTab = log.tab;
+                if(log.tab === "시스템") targetTab = selectedTabs[0] || "Main";
+                if(!containers[targetTab]) return;
 
-                if (lastType && lastType !== currentType) {
-                    const divider = document.createElement('div'); divider.className = "character-divider"; targetContainer.appendChild(divider);
-                }
-                const same = (lastType === currentType && !isNarr && !isSys); tabLastSpeakerType[currentTargetTab] = currentType;
+                const targetContainer = containers[targetTab];
+                const isNarr = narrator && log.name === narrator;
+                const isSys = log.name === "";
 
-                const row = document.createElement('div'); row.className = "notion-row"; row.dataset.tab = currentTargetTab; row.dataset.speaker = log.name;
+                const row = document.createElement('div');
+                row.className = "notion-row";
+                row.dataset.speaker = log.name;
 
                 let inner = `<div class="content-cell">`;
-                if(!isNarr && !isSys) {
-                    const assignedColor = charColorMap[log.name] || (currentColorTheme === 'roll20' ? '#111111' : '#cccccc');
-                    inner += same ? `<div style="width:28px; flex-shrink:0;"></div>` : `<div style="width:5px; flex-shrink:0;"></div>`;
-                    inner += `<div style="flex:1;">${!same ? `<span class="char-name" style="color:${assignedColor}">${log.name}</span>`:''}<div class="notion-block" contenteditable="true" spellcheck="false">${log.message}</div></div>`;
+                if (!isNarr && !isSys) {
+                    // 유저가 원한 전통적인 Roll20 [이름: 대사] 한 줄 구조 매핑 및 개별 색상 부여
+                    const color = charColorMap[log.name] || (currentColorTheme === 'roll20' ? '#111111' : '#ffffff');
+                    inner += `<div class="notion-block msg-line" contenteditable="true" spellcheck="false">` +
+                             `<span class="char-name" style="color:${color};">${log.name} :</span>` +
+                             `<span class="char-msg">${log.message}</span></div>`;
+                } else if (isNarr) {
+                    inner += `<div class="notion-block state-narrator" contenteditable="true" spellcheck="false">${log.message}</div>`;
                 } else {
-                    inner += `<div class="notion-block ${isNarr?'state-narrator':'state-system'}" contenteditable="true" spellcheck="false">${log.message}</div>`;
+                    // 시스템 메시지는 캐릭터 이름 없이 별도 디자인으로 완전 분리 처리
+                    inner += `<div class="notion-block state-system" contenteditable="true" spellcheck="false">${log.message}</div>`;
                 }
-                inner += `</div><div class="control-cell"><button class="row-control" onclick="saveHistoryState(); this.closest('.notion-row').remove();">del</button></div>`;
+                inner += `</div><div class="control-cell"><button class="row-control" onclick="saveHistoryState(); this.closest('.notion-row').remove();">삭제</button></div>`;
                 
-                row.innerHTML = inner; targetContainer.appendChild(row);
+                row.innerHTML = inner;
+                targetContainer.appendChild(row);
             });
-            
-            const fontValue = currentFontType === "serif" ? "var(--font-serif)" : "var(--font-sans)";
-            document.querySelectorAll('.output-room-title').forEach(el => el.style.fontFamily = fontValue);
-            attachAccordionEvents(); runAutoSpellChecker();
+
+            attachAccordionEvents();
+            runSpellChecker();
         });
 
-        function runAutoSpellChecker() {
+        function runSpellChecker() {
             const isEnabled = document.querySelector('input[name="spellCheckToggle"]:checked').value === "on";
             const reportCard = document.getElementById('spellReportCard');
             const reportList = document.getElementById('spellReportList');
-            const summaryBar = document.getElementById('spellSummaryBar');
-            reportList.innerHTML = ""; summaryBar.innerHTML = ""; reportCard.style.display = "none";
-            if (!isEnabled) return;
-            
-            const blocks = document.querySelectorAll('.notion-block');
+            reportList.innerHTML = ""; reportCard.style.display = "none";
+            if(!isEnabled) return;
+
+            const blocks = document.querySelectorAll('.char-msg, .state-narrator');
             let detected = [];
+
             blocks.forEach((block, idx) => {
-                const text = block.innerText;
+                let text = block.innerText;
                 spellRules.forEach(rule => {
-                    if (rule.wrong.test(text)) {
-                        rule.wrong.lastIndex = 0; 
-                        detected.push({
-                            el: block,
-                            row: block.closest('.notion-row'),
-                            line: idx + 1,
-                            speaker: block.closest('.notion-row')?.dataset.speaker || "서술/시스템",
-                            rule: rule
-                        });
+                    if(rule.wrong.test(text)) {
+                        rule.wrong.lastIndex = 0;
+                        detected.push({ el: block, wrong: rule.wrong, right: rule.right, text: text, line: idx+1 });
                     }
-                    rule.wrong.lastIndex = 0;
                 });
             });
-            
-            if (detected.length > 0) {
+
+            if(detected.length > 0) {
                 reportCard.style.display = "block";
-                const chip = document.createElement('div'); chip.className = "spell-summary-chip";
-                chip.innerHTML = `<span>발견된 맞춤법 오류</span><span class="chip-count">${detected.length}건</span>`;
-                summaryBar.appendChild(chip);
-                
-                detected.forEach((issue) => {
-                    const item = document.createElement('div'); item.className = "spell-report-item";
-                    item.innerHTML = `
-                        <div class="spell-context-box">
-                            <span class="spell-meta-tag">${issue.line}행 · ${issue.speaker}</span>
-                            <div class="spell-context-text"><s>${issue.rule.wrong.source}</s> → <strong>${issue.rule.right}</strong></div>
-                        </div>
-                        <button class="spell-fix-trigger">교정</button>`;
-                    
-                    item.querySelector('.spell-fix-trigger').addEventListener('click', (e) => {
-                        e.stopPropagation();
+                detected.forEach(item => {
+                    const div = document.createElement('div'); div.className = "spell-report-item";
+                    div.innerHTML = `<div><strong>${item.line}행 근처:</strong> 오타 가능성 발견 -> <span>${item.right}</span></div><button class="spell-fix-trigger">교정</button>`;
+                    div.querySelector('.spell-fix-trigger').onclick = () => {
                         saveHistoryState();
-                        issue.rule.wrong.lastIndex = 0;
-                        issue.el.innerHTML = issue.el.innerHTML.replace(issue.rule.wrong, issue.rule.right);
-                        item.classList.add('is-fixed');
-                    });
-                    reportList.appendChild(item);
+                        item.wrong.lastIndex = 0;
+                        item.el.innerText = item.el.innerText.replace(item.wrong, item.right);
+                        div.remove();
+                    };
+                    reportList.appendChild(div);
                 });
             }
         }
 
-        document.getElementById('btnSpellFixAll').addEventListener('click', () => {
-            document.querySelectorAll('.spell-report-item:not(.is-fixed) .spell-fix-trigger').forEach(btn => btn.click());
-        });
+        document.getElementById('btnSpellFixAll').onclick = () => {
+            document.querySelectorAll('.spell-fix-trigger').forEach(b => b.click());
+        };
+        document.getElementById('btnSpellDismiss').onclick = () => { document.getElementById('spellReportCard').style.display="none"; };
 
-        document.getElementById('btnSpellDismiss').addEventListener('click', () => {
-            document.getElementById('spellReportCard').style.display = "none";
-        });
-
-        function buildFinal() {
+        // 최종 파일 빌드 함수 (가변 테마 및 가변 서체 적용완료)
+        function buildFinalHTML() {
+            const p = themeProfiles[currentColorTheme];
             const chosenFont = currentFontType === "serif" ? `'Hina Mincho', 'Noto Serif KR', serif` : `'Noto Sans KR', sans-serif`;
-            const p = themeProfiles[currentColorTheme]; const charColorMap = getCharacterColorMap();
-            
-            const bodyBg = p.bg;
-            const bodyText = p.text;
+            const charColorMap = getCharacterColorMap();
 
-            let out = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>세션 로그 백업</title><style>
+            let out = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>세션 로그 백업</title><style>
                 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=Hina+Mincho&display=swap');
-                * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { background-color: ${bodyBg} !important; color: ${bodyText} !important; font-family:'Noto Sans KR', sans-serif; padding: 50px 24px; display: flex; flex-direction: column; align-items: center; }
-                .page-wrap { width: 100%; max-width: 850px; }
-                h1 { font-family:${chosenFont}; font-size:1.4rem; text-align:center; color:${p.title} !important; background-color:${p.titleBg} !important; border:1px solid ${p.titleBorder} !important; padding:14px; margin-bottom:14px; font-weight:700; }
-                .script-box { display:flex; flex-direction:column; gap:1px; background:${p.bg} !important; padding:20px; border:1px solid ${p.border}; margin-bottom:28px; width:100%; }
-                .row { display:flex; align-items:flex-start; gap:12px; padding:5px 6px; width:100%; }
-                .msg { font-family:${chosenFont}; font-size:0.95rem; line-height:1.55; white-space:pre-wrap; flex:1; color:${p.text} !important; word-break:break-word; }
-                .name { font-size:0.85rem; font-weight:700; display:block; margin-bottom:2px; }
-                .narrator { text-align:center; font-weight:700; font-style:italic; padding:3px 10px; color:${p.narrator} !important; width:100%; }
-                .system { color:${p.sys} !important; font-size:0.85rem; }
-                .divider { border-top:1px solid rgba(128,128,128,0.15); margin:6px 0; }
-                mark.hl-yellow { background-color:#e0e0e0 !important; color:#000 !important; padding:1px 3px; }
-                mark.hl-green { background-color:#c0c0c0 !important; color:#000 !important; padding:1px 3px; }
-                mark.hl-blue { background-color:#a0a0a0 !important; color:#000 !important; padding:1px 3px; }
-                mark.hl-pink { background-color:#808080 !important; color:#fff !important; padding:1px 3px; }
-            </style></head><body><div class="page-wrap">`;
+                body { background-color: ${p.bg} !important; color: ${p.text} !important; font-family: ${chosenFont}; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
+                .wrapper { width: 100%; max-width: 850px; }
+                h1 { font-size: 1.25rem; text-align: center; color: ${p.title} !important; background-color: ${p.titleBg} !important; border: 1px solid ${p.titleBorder} !important; padding: 12px; margin-bottom: 16px; }
+                .container { border: 1px solid ${p.border}; padding: 20px; background: ${p.bg}; display: flex; flex-direction: column; gap: 4px; margin-bottom: 30px; }
+                .row { display: flex; line-height: 1.6; font-size: 0.95rem; word-break: break-word; white-space: pre-wrap; }
+                .name { font-weight: 700; margin-right: 6px; }
+                .narrator { color: ${p.narrator} !important; font-weight: 500; }
+                .system { color: ${p.sys} !important; font-style: italic; font-size: 0.88rem; opacity: 0.8; }
+                mark.hl-yellow { background: #e0e0e0; color: #000; }
+                mark.hl-green { background: #c0c0c0; color: #000; }
+                mark.hl-blue { background: #a0a0a0; color: #000; }
+                mark.hl-pink { background: #808080; color: #fff; }
+            </style></head><body><div class="wrapper">`;
 
-            const process = (nodes) => {
-                let res = ""; let last = "";
-                nodes.forEach(el => {
-                    if(el.classList.contains('character-divider')) { res+='<div class="divider"></div>'; return; }
-                    const block = el.querySelector('.notion-block'); if(!block) return;
-                    let cleanHTML = block.innerHTML; 
+            document.querySelectorAll('#dynamicTabsOutput > .notion-card').forEach(card => {
+                const title = card.querySelector('.output-room-title').innerText;
+                out += `<h1>${title}</h1><div class="container">`;
 
-                    const isN = block.classList.contains('state-narrator'), isS = block.classList.contains('state-system');
-                    const spk = el.dataset.speaker || ""; const same = (last === spk && !isN && !isS); last = (isN?"_N":isS?"_S":spk);
-                    res += '<div class="row">';
-                    if(!isN && !isS) {
-                        const finalColor = charColorMap[spk] || (currentColorTheme === 'roll20' ? '#111111' : '#cccccc');
-                        res += `<div>${!same?`<span class="name" style="color:${finalColor}">${spk}</span>`:''}<div class="msg">${cleanHTML}</div></div>`;
-                    } else res += `<div class="msg ${isN?'narrator':'system'}">${cleanHTML}</div>`;
-                    res += '</div>';
-                }); return res;
-            };
+                card.querySelectorAll('.notion-row').forEach(row => {
+                    const isSys = row.querySelector('.state-system');
+                    const isNarr = row.querySelector('.state-narrator');
+                    const nameSpan = row.querySelector('.char-name');
+                    const msgSpan = row.querySelector('.char-msg');
 
-            const cards = document.querySelectorAll('#dynamicTabsOutput > .notion-card');
-            cards.forEach((card, idx) => {
-                const titleText = card.querySelector('.output-room-title').innerText;
-                out += `<h1>${titleText}</h1>`;
-                out += `<div class="script-box">${process(card.querySelectorAll('.script-container > div'))}</div>`;
+                    if (isSys) {
+                        out += `<div class="row system">${isSys.innerHTML}</div>`;
+                    } else if (isNarr) {
+                        out += `<div class="row narrator">${isNarr.innerHTML}</div>`;
+                    } else if (nameSpan && msgSpan) {
+                        const speaker = row.dataset.speaker;
+                        const color = charColorMap[speaker] || (currentColorTheme === 'roll20' ? '#111111' : '#ffffff');
+                        out += `<div class="row"><span class="name" style="color:${color}">${nameSpan.innerText}</span><span>${msgSpan.innerHTML}</span></div>`;
+                    }
+                });
+                out += `</div>`;
             });
-            return out + '</div></body></html>';
+
+            return out + `</div></body></html>`;
         }
 
         document.getElementById('btnCopy').addEventListener('click', () => {
-            navigator.clipboard.writeText(buildFinal()).then(() => {
-                const btn = document.getElementById('btnCopy');
-                const orig = btn.textContent; btn.textContent = "복사 완료";
-                setTimeout(() => { btn.textContent = orig; }, 2000);
+            navigator.clipboard.writeText(buildFinalHTML()).then(() => {
+                const b = document.getElementById('btnCopy'); const o = b.textContent;
+                b.textContent = "복사 성공!"; setTimeout(() => b.textContent = o, 1500);
             });
         });
-        
+
         document.getElementById('btnDownload').addEventListener('click', () => {
-            const blob = new Blob([buildFinal()], { type: 'text/html;charset=utf-8;' });
-            const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-            link.download = `Log_Backup.html`; link.click();
+            const blob = new Blob([buildFinalHTML()], { type: 'text/html;charset=utf-8;' });
+            const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+            a.download = `${globalRoomTitle}_Roll20_Style.html`; a.click();
         });
 
-        document.getElementById('logSearchInput').addEventListener('input', function(e) {
+        document.getElementById('logSearchInput').addEventListener('input', (e) => {
             const k = e.target.value.toLowerCase().trim();
             document.querySelectorAll('.notion-row').forEach(r => {
-                const block = r.querySelector('.notion-block'); if(!block) return;
-                if(block.innerText.toLowerCase().includes(k) || k === '') r.classList.remove('filtered-out');
+                if(r.innerText.toLowerCase().includes(k) || k === '') r.classList.remove('filtered-out');
                 else r.classList.add('filtered-out');
             });
         });
@@ -777,12 +586,12 @@
         const styler = document.getElementById('textStyler');
         document.addEventListener('selectionchange', () => {
             const sel = window.getSelection();
-            if (sel.isCollapsed || !sel.toString().trim()) { styler.style.display = 'none'; return; }
+            if(sel.isCollapsed || !sel.toString().trim()) { styler.style.display = 'none'; return; }
             let node = sel.anchorNode;
-            while (node && node !== document.body) {
-                if (node.classList && node.classList.contains('notion-block')) {
+            while(node && node !== document.body) {
+                if(node.classList && node.classList.contains('notion-block')) {
                     const range = sel.getRangeAt(0); const rect = range.getBoundingClientRect();
-                    styler.style.left = `${rect.left + window.scrollX}px`; styler.style.top = `${rect.top + window.scrollY - 45}px`;
+                    styler.style.left = `${rect.left + window.scrollX}px`; styler.style.top = `${rect.top + window.scrollY - 40}px`;
                     styler.style.display = 'flex'; return;
                 }
                 node = node.parentNode;
@@ -791,15 +600,8 @@
         });
 
         styler.addEventListener('mousedown', (e) => {
-            e.preventDefault(); const btn = e.target.closest('[data-cmd]'); if (!btn) return;
-            saveHistoryState(); const cmd = btn.getAttribute('data-cmd');
-            if (cmd.startsWith('hl-')) {
-                const colorClass = cmd; const sel = window.getSelection();
-                if (!sel.isCollapsed) {
-                    const range = sel.getRangeAt(0); const mark = document.createElement('mark');
-                    mark.className = colorClass; range.surroundContents(mark);
-                }
-            } else { document.execCommand(cmd, false, null); }
+            e.preventDefault(); const btn = e.target.closest('[data-cmd]'); if(!btn) return;
+            saveHistoryState(); document.execCommand(btn.getAttribute('data-cmd'), false, null);
         });
     </script>
 </body>
