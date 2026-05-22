@@ -7,9 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=Hina+Mincho&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
     <style>
         :root {
             --bg-main: #121212;
@@ -203,7 +200,7 @@
         .btn-submit:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
         .btn-util { flex: 1; min-width: 80px; }
 
-        /* 맞춤법 리포트 카드 */
+        /* ── 맞춤법 리포트 카드 (흑백 스타일에 연동) ── */
         .spell-report-card {
             background: var(--bg-card); border: 1px solid rgba(255,255,255,0.2);
             border-radius: var(--radius-lg); padding: 18px 20px; display: none;
@@ -267,6 +264,7 @@
         }
         .spell-fix-trigger:hover { background: rgba(255,255,255,0.25); }
 
+        /* 로그 편집 에디터 내 본문 박스 */
         .script-container {
             display: flex; flex-direction: column; gap: 1px;
             background-color: var(--script-bg); padding: 16px; border-radius: var(--radius-md);
@@ -300,7 +298,7 @@
         .notion-row:hover .control-cell { opacity: 1; }
         .row-control { 
             background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); 
-            color: #ffffff; cursor: pointer; font-size: 0.7 ramp; font-weight: bold; 
+            color: #ffffff; cursor: pointer; font-size: 0.7rem; font-weight: bold; 
             padding: 2px 7px; border-radius: 0px; transition: 0.15s;
         }
         .row-control:hover { background: #ffffff; color: #000000; border-color: #ffffff; }
@@ -339,12 +337,18 @@
         .btn-scroll-top { border-left: 1px solid rgba(255,255,255,0.15); margin-left: 2px; padding-left: 14px; }
         
         .char-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 2px; display: block; font-family: var(--font-ui); }
-        
-        /* 서술자 텍스트 크기 1px 축소 (0.95rem -> 0.89rem) */
-        .state-narrator { text-align: center; font-weight: 700; font-style: italic; color: var(--script-narrator) !important; width: 100%; margin: 2px 0; padding: 2px 10px; font-size: 0.89rem; }
+        .state-narrator { text-align: center; font-weight: 700; font-style: italic; color: var(--script-narrator) !important; width: 100%; margin: 2px 0; padding: 2px 10px; font-size: 0.95rem; }
         .state-system { font-family: var(--font-ui); font-size: 0.85rem; color: var(--script-sys) !important; }
         .character-divider { border-top: 1px solid rgba(255, 255, 255, 0.05); margin: 4px 0 2px 0; width: 100%; }
 
+        /* 빈 상태 힌트 */
+        .empty-hint {
+            text-align: center; padding: 40px 20px; color: var(--text-muted);
+            font-size: 0.88rem; line-height: 1.7;
+        }
+        .empty-hint .hint-icon { font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.4; }
+
+        /* 스크롤바 */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 0px; }
@@ -357,12 +361,12 @@
         <header>
             <div class="header-badge">TRPG 로그 백업기</div>
             <h1>논단군 코코포 로그 백업기</h1>
-            <p>간단하게 로그를 백업합시다</p>
+            <p>직관적이고 편한 로그 백업기</p>
         </header>
 
         <div class="notion-card">
             <div class="card-header">
-                <div class="notion-label">설정</div>
+                <div class="notion-label">설정 센터</div>
             </div>
             <div class="grid-config">
                 <div class="input-group">
@@ -400,9 +404,9 @@
                 </div>
             </div>
             <div class="input-group" style="margin-top: 10px;">
-                <span class="input-label">6. 캐릭터별 색상 지정</span>
+                <span class="input-label">6. 캐릭터별 개별 색상 지정</span>
                 <div id="characterColorPanel" class="color-picker-panel">
-                    <span style="color: var(--text-muted); font-size: 0.83rem;"> </span>
+                    <span style="color: var(--text-muted); font-size: 0.83rem;">파일을 업로드하면 캐릭터명이 표시됩니다.</span>
                 </div>
             </div>
             <div class="input-group" style="margin-top: 10px;">
@@ -425,6 +429,7 @@
             <div class="spell-report-header">
                 <div class="spell-report-meta">
                     <div class="spell-report-title">맞춤법 교정 리포트</div>
+                    <div class="spell-report-sub">TRPG 세션 특화 고정밀 엔진</div>
                 </div>
                 <div class="spell-report-actions">
                     <button id="btnSpellFixAll" class="spell-btn-all">모두 교정</button>
@@ -452,7 +457,7 @@
     <div class="floating-history-panel">
         <button id="btnUndo" class="history-btn" disabled>뒤로</button>
         <button id="btnRedo" class="history-btn" disabled>앞으로</button>
-        <button id="btnScrollTop" class="history-btn btn-scroll-top">↑</button>
+        <button id="btnScrollTop" class="history-btn btn-scroll-top">↑ Top</button>
     </div>
 
     <script>
@@ -466,7 +471,9 @@
         let isHistoryAction = false; 
         let globalRoomTitle = "세션 로그";
 
+        /* 교정 신뢰도 및 패턴 수 대폭 향상형 spellRules */
         const spellRules = [
+            // ── 됐다/됐어 계열 완전 정복 ──
             { wrong: /됬됐다/g, right: "됐다", cat: "맞춤법" },
             { wrong: /됬어/g, right: "됐어", cat: "맞춤법" },
             { wrong: /됬/g, right: "됐", cat: "맞춤법" },
@@ -477,6 +484,8 @@
             { wrong: /되었던/g, right: "됐던", cat: "맞춤법" },
             { wrong: /됬음/g, right: "됐음", cat: "맞춤법" },
             { wrong: /됬다/g, right: "됐다", cat: "맞춤법" },
+
+            // ── 안/않 구별 정밀화 ──
             { wrong: /않하고/g, right: "안 하고", cat: "맞춤법" },
             { wrong: /않돼/g, right: "안 돼", cat: "맞춤법" },
             { wrong: /않된다/g, right: "안 된다", cat: "맞춤법" },
@@ -487,6 +496,8 @@
             { wrong: /않먹/g, right: "안 먹", cat: "맞춤법" },
             { wrong: /않오/g, right: "안 오", cat: "맞춤법" },
             { wrong: /않좋/g, right: "안 좋", cat: "맞춤법" },
+
+            // ── 부정 부사 '안' 띄어쓰기 철저 검수 ──
             { wrong: /안되나요/g, right: "안 되나요", cat: "띄어쓰기" },
             { wrong: /안되죠/g, right: "안 되죠", cat: "띄어쓰기" },
             { wrong: /안되는/g, right: "안 되는", cat: "띄어쓰기" },
@@ -498,6 +509,8 @@
             { wrong: /안가/g, right: "안 가", cat: "띄어쓰기" },
             { wrong: /안좋은/g, right: "안 좋은", cat: "띄어쓰기" },
             { wrong: /안좋아/g, right: "안 좋아", cat: "띄어쓰기" },
+
+            // ── 다빈도 맞춤법 파괴 교정 ──
             { wrong: /어의없/g, right: "어처구니없", cat: "맞춤법" },
             { wrong: /바램/g, right: "바람", cat: "맞춤법" },
             { wrong: /그라믄/g, right: "그러면", cat: "맞춤법" },
@@ -523,14 +536,19 @@
             { wrong: /틀리다/g, right: "다르다", cat: "맞춤법" }, 
             { wrong: /재밋/g, right: "재밌", cat: "맞춤법" },
             { wrong: /낳은/g, right: "나은", cat: "맞춤법" }, 
-            { wrong: /더낳은/g, right: "더 나은", cat: "띄어쓰기" },
+            { wrong: /더낳은/g, right: "더 나은", cat: "맞춤법" },
             { wrong: /낳아/g, right: "나아", cat: "맞춤법" },
             { wrong: /설레임/g, right: "설렘", cat: "맞춤법" },
+            { wrong: /연예인/g, right: "연예인", cat: "" },
             { wrong: /바래어/g, right: "바라어", cat: "맞춤법" },
             { wrong: /희안한/g, right: "희한한", cat: "맞춤법" },
             { wrong: /희안하/g, right: "희한하", cat: "맞춤법" },
+            { wrong: /얘기체/g, right: "체", cat: "" },
+
+            // ── 의존명사 및 보조용언 띄어쓰기 규격 최적화 ──
             { wrong: /할거야/g, right: "할 거야", cat: "띄어쓰기" },
             { wrong: /할거에요/g, right: "할 거예요", cat: "띄어쓰기" },
+            { wrong: /할거야/g, right: "할 거야", cat: "띄어쓰기" },
             { wrong: /할수/g, right: "할 수", cat: "띄어쓰기" },
             { wrong: /할수있다/g, right: "할 수 있다", cat: "띄어쓰기" },
             { wrong: /할수없는/g, right: "할 수 없는", cat: "띄어쓰기" },
@@ -549,7 +567,7 @@
             { wrong: /해볼까/g, right: "해 볼까", cat: "띄어쓰기" },
             { wrong: /해볼게/g, right: "해 볼게", cat: "띄어쓰기" },
             { wrong: /해보자/g, right: "해 보자", cat: "띄어쓰기" },
-            { wrong: /해 보면/g, right: "해 보면", cat: "띄어쓰기" },
+            { wrong: /해보면/g, right: "해 보면", cat: "띄어쓰기" },
             { wrong: /해봐/g, right: "해 봐", cat: "띄어쓰기" },
             { wrong: /가볼까/g, right: "가 볼까", cat: "띄어쓰기" },
             { wrong: /가봐야/g, right: "가 봐야", cat: "띄어쓰기" },
@@ -560,21 +578,27 @@
             { wrong: /갈때/g, right: "갈 때", cat: "띄어쓰기" },
             { wrong: /할때/g, right: "할 때", cat: "띄어쓰기" },
             { wrong: /했을때/g, right: "했을 때", cat: "띄어쓰기" },
+
+            // ── 세션 다빈도 TRPG 단어 왜곡 교정 ──
             { wrong: /던젼/g, right: "던전", cat: "맞춤법" },
             { wrong: /케릭터/g, right: "캐릭터", cat: "맞춤법" },
             { wrong: /보스몹/g, right: "보스 몹", cat: "띄어쓰기" },
             { wrong: /아이템창/g, right: "아이템 창", cat: "띄어쓰기" },
             { wrong: /다이스롤/g, right: "다이스 롤", cat: "띄어쓰기" },
             { wrong: /크리티컬히트/g, right: "크리티컬 히트", cat: "띄어쓰기" },
+
+            // ── 조사 및 다빈도 어미 결합 교정 ──
             { wrong: /-(이)에요$/g, right: "예요", cat: "맞춤법" },
             { wrong: /이예요/g, right: "이에요", cat: "맞춤법" },
             { wrong: /할려구/g, right: "하려고", cat: "맞춤법" },
             { wrong: /할려고/g, right: "하려고", cat: "맞춤법" },
             { wrong: /먹을려고/g, right: "먹으려고", cat: "맞춤법" },
+            { wrong: /가다시피/g, right: "가다시피", cat: "" },
             { wrong: /하는 지/g, right: "하는지", cat: "띄어쓰기" },
             { wrong: /했는 지/g, right: "했는지", cat: "띄어쓰기" }
         ].filter(r => r.cat !== "");
 
+        /* 흑백 모노크롬 계열로 내부 프로필 폴백 컬러 구조 조정 (옅은 색감으로 반영) */
         const themeProfiles = {
             roll20: { bg: "#e9eced", text: "#232323", fallbackName: "#454545", narrator: "#232323", sys: "#666666", border: "#dcdfe0", title: "#232323", titleBg: "#e9eced", titleBorder: "rgba(0,0,0,0.1)" },
             ccfolia: { bg: "#111111", text: "#e3e3e3", fallbackName: "#cccccc", narrator: "#e3e3e3", sys: "#888888", border: "#222222", title: "#e3e3e3", titleBg: "#222222", titleBorder: "rgba(255,255,255,0.15)" }
@@ -661,7 +685,7 @@
             const panel = document.getElementById('characterColorPanel'); panel.innerHTML = "";
             const p = themeProfiles[currentColorTheme]; const sortedChars = Array.from(detectedCharacters).sort();
             if(sortedChars.length === 0) {
-                panel.innerHTML = `<span style="color: var(--text-muted); font-size: 0.83rem;">추출된 캐릭터가 없습니다.</span>`; return;
+                panel.innerHTML = `<span style="color: var(--text-muted); font-size: 0.85rem;">추출된 캐릭터가 없습니다.</span>`; return;
             }
             sortedChars.forEach(char => {
                 const item = document.createElement('div'); item.className = "color-picker-item";
@@ -713,129 +737,71 @@
             });
         }
 
-        // 실행 및 이미지 추출 연동 메인 비동기 핸들러
-        document.getElementById('btnProcess').addEventListener('click', async () => {
+        document.getElementById('btnProcess').addEventListener('click', () => {
             if(rawLogData.length === 0) return alert('파일을 업로드하세요.');
+            undoStack = []; redoStack = []; updateHistoryButtons();
             
-            const btnSubmit = document.getElementById('btnProcess');
-            const originalBtnText = btnSubmit.textContent;
-            btnSubmit.textContent = "처리 및 이미지 추출 중...";
-            btnSubmit.disabled = true;
+            const narrator = document.getElementById('narratorName').value.trim();
+            const charColorMap = getCharacterColorMap();
+            const selectedTabs = Array.from(document.querySelectorAll('.tab-chk:checked')).map(c => c.value);
+            
+            selectedTabs.sort((a, b) => {
+                if (a.toLowerCase() === 'main') return -1;
+                if (b.toLowerCase() === 'main') return 1;
+                return a.localeCompare(b);
+            });
 
-            try {
-                // 1. 기존 로그 HTML 본문 파싱 및 변환 로직 실행
-                undoStack = []; redoStack = []; updateHistoryButtons();
+            const dynamicTabsOutput = document.getElementById('dynamicTabsOutput');
+            dynamicTabsOutput.innerHTML = ""; const tabContainers = {}; const tabLastSpeakerType = {}; 
+
+            selectedTabs.forEach(t => {
+                const card = document.createElement('div'); card.className = "notion-card";
+                card.id = `card_${t.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                card.innerHTML = `
+                    <div class="notion-label">세션 로그 채널 — [${t}]</div>
+                    <h2 class="output-room-title">${globalRoomTitle} - ${t}</h2>
+                    <div class="script-container"></div>
+                `;
+                dynamicTabsOutput.appendChild(card);
+                tabContainers[t] = card.querySelector('.script-container'); tabLastSpeakerType[t] = "";
+            });
+
+            const p = themeProfiles[currentColorTheme];
+            
+            rawLogData.forEach(log => {
+                let currentTargetTab = log.tab;
+                if(log.tab === "시스템") { currentTargetTab = selectedTabs[0] || null; }
+                if(!currentTargetTab || !selectedTabs.includes(currentTargetTab)) return;
                 
-                const narrator = document.getElementById('narratorName').value.trim();
-                const charColorMap = getCharacterColorMap();
-                const selectedTabs = Array.from(document.querySelectorAll('.tab-chk:checked')).map(c => c.value);
-                
-                selectedTabs.sort((a, b) => {
-                    if (a.toLowerCase() === 'main') return -1;
-                    if (b.toLowerCase() === 'main') return 1;
-                    return a.localeCompare(b);
-                });
+                const targetContainer = tabContainers[currentTargetTab];
+                const isNarr = narrator && log.name === narrator; const isSys = log.name === "";
+                const currentType = isSys ? "__SYS__" : (isNarr ? "__NARR__" : log.name);
+                const lastType = tabLastSpeakerType[currentTargetTab];
 
-                const dynamicTabsOutput = document.getElementById('dynamicTabsOutput');
-                dynamicTabsOutput.innerHTML = ""; const tabContainers = {}; const tabLastSpeakerType = {}; 
-
-                selectedTabs.forEach(t => {
-                    const card = document.createElement('div'); card.className = "notion-card";
-                    card.id = `card_${t.replace(/[^a-zA-Z0-9]/g, '_')}`;
-                    card.innerHTML = `
-                        <div class="notion-label">세션 로그 채널 — [${t}]</div>
-                        <h2 class="output-room-title">${globalRoomTitle} - ${t}</h2>
-                        <div class="script-container"></div>
-                    `;
-                    dynamicTabsOutput.appendChild(card);
-                    tabContainers[t] = card.querySelector('.script-container'); tabLastSpeakerType[t] = "";
-                });
-
-                const p = themeProfiles[currentColorTheme];
-                
-                rawLogData.forEach(log => {
-                    let currentTargetTab = log.tab;
-                    if(log.tab === "시스템") { currentTargetTab = selectedTabs[0] || null; }
-                    if(!currentTargetTab || !selectedTabs.includes(currentTargetTab)) return;
-                    
-                    const targetContainer = tabContainers[currentTargetTab];
-                    const isNarr = narrator && log.name === narrator; const isSys = log.name === "";
-                    const currentType = isSys ? "__SYS__" : (isNarr ? "__NARR__" : log.name);
-                    const lastType = tabLastSpeakerType[currentTargetTab];
-
-                    if (lastType && lastType !== currentType) {
-                        const divider = document.createElement('div'); divider.className = "character-divider"; targetContainer.appendChild(divider);
-                    }
-                    const same = (lastType === currentType && !isNarr && !isSys); tabLastSpeakerType[currentTargetTab] = currentType;
-
-                    const row = document.createElement('div'); row.className = "notion-row"; row.dataset.tab = currentTargetTab; row.dataset.speaker = log.name;
-                    let cleanMessage = log.message.replace(/<button[^>]*class="[^"]*del[^"]*"[^>]*>.*?<\/button>/gi, '').replace(/<button[^>]*>del<\/button>/gi, '').replace(/class="[^"]*del[^"]*"/gi, '');
-
-                    let inner = `<div class="content-cell">`;
-                    if(!isNarr && !isSys) {
-                        const assignedColor = charColorMap[log.name] || p.fallbackName;
-                        inner += same ? `<div class="avatar-placeholder"></div>` : (log.avatar ? `<img src="${log.avatar}" class="avatar-box">` : `<div class="avatar-box"></div>`);
-                        inner += `<div style="flex:1;">${!same ? `<span class="char-name" style="color:${assignedColor}">${log.name}</span>`:''}<div class="notion-block" contenteditable="true" spellcheck="false">${cleanMessage}</div></div>`;
-                    } else {
-                        inner += `<div class="notion-block ${isNarr?'state-narrator':'state-system'}" contenteditable="true" spellcheck="false">${isNarr ? `<b><i>${cleanMessage}</i></b>` : cleanMessage}</div>`;
-                    }
-                    inner += `</div><div class="control-cell"><button class="row-control" onclick="saveHistoryState(); this.closest('.notion-row').remove();">del</button></div>`;
-                    
-                    row.innerHTML = inner; targetContainer.appendChild(row);
-                });
-                
-                const fontValue = currentFontType === "serif" ? "var(--font-serif)" : "var(--font-sans)";
-                document.querySelectorAll('.output-room-title').forEach(el => el.style.fontFamily = fontValue);
-                attachAccordionEvents(); runAutoSpellChecker();
-
-                // 2. 동시 연동 기능: 이미지 추출 자동 매칭 및 ZIP 다운로드 백업 분기
-                const zip = new JSZip();
-                const uniqueImages = new Map();
-
-                rawLogData.forEach(log => {
-                    if (log.name && log.avatar && log.avatar.startsWith('http')) {
-                        if (!uniqueImages.has(log.name)) {
-                            uniqueImages.set(log.name, log.avatar);
-                        }
-                    }
-                });
-
-                if (uniqueImages.size > 0) {
-                    let successCount = 0;
-                    for (const [charName, url] of uniqueImages.entries()) {
-                        try {
-                            const response = await fetch(url);
-                            if (!response.ok) throw new Error('Network error');
-                            const blob = await response.blob();
-                            
-                            let ext = 'png';
-                            if (blob.type === 'image/jpeg' || url.includes('.jpg') || url.includes('.jpeg')) ext = 'jpg';
-                            if (blob.type === 'image/gif' || url.includes('.gif')) ext = 'gif';
-                            if (blob.type === 'image/webp' || url.includes('.webp')) ext = 'webp';
-
-                            const safeName = charName.replace(/[\/\\:\*\?"<>\|]/g, "_");
-                            zip.file(`${safeName}.${ext}`, blob);
-                            successCount++;
-                        } catch (err) {
-                            console.warn(`이미지 다운로드 제한 발생 (${charName}):`, err);
-                        }
-                    }
-
-                    if (successCount > 0) {
-                        const content = await zip.generateAsync({ type: "blob" });
-                        const link = document.createElement("a");
-                        link.href = URL.createObjectURL(content);
-                        link.download = `${globalRoomTitle}_Images.zip`;
-                        link.click();
-                    }
+                if (lastType && lastType !== currentType) {
+                    const divider = document.createElement('div'); divider.className = "character-divider"; targetContainer.appendChild(divider);
                 }
-            } catch (error) {
-                console.error(error);
-                alert('처리 과정 중 알 수 없는 오류가 발생했습니다.');
-            } finally {
-                btnSubmit.textContent = originalBtnText;
-                btnSubmit.disabled = false;
-            }
+                const same = (lastType === currentType && !isNarr && !isSys); tabLastSpeakerType[currentTargetTab] = currentType;
+
+                const row = document.createElement('div'); row.className = "notion-row"; row.dataset.tab = currentTargetTab; row.dataset.speaker = log.name;
+                let cleanMessage = log.message.replace(/<button[^>]*class="[^"]*del[^"]*"[^>]*>.*?<\/button>/gi, '').replace(/<button[^>]*>del<\/button>/gi, '').replace(/class="[^"]*del[^"]*"/gi, '');
+
+                let inner = `<div class="content-cell">`;
+                if(!isNarr && !isSys) {
+                    const assignedColor = charColorMap[log.name] || p.fallbackName;
+                    inner += same ? `<div class="avatar-placeholder"></div>` : (log.avatar ? `<img src="${log.avatar}" class="avatar-box">` : `<div class="avatar-box"></div>`);
+                    inner += `<div style="flex:1;">${!same ? `<span class="char-name" style="color:${assignedColor}">${log.name}</span>`:''}<div class="notion-block" contenteditable="true" spellcheck="false">${cleanMessage}</div></div>`;
+                } else {
+                    inner += `<div class="notion-block ${isNarr?'state-narrator':'state-system'}" contenteditable="true" spellcheck="false">${isNarr ? `<b><i>${cleanMessage}</i></b>` : cleanMessage}</div>`;
+                }
+                inner += `</div><div class="control-cell"><button class="row-control" onclick="saveHistoryState(); this.closest('.notion-row').remove();">del</button></div>`;
+                
+                row.innerHTML = inner; targetContainer.appendChild(row);
+            });
+            
+            const fontValue = currentFontType === "serif" ? "var(--font-serif)" : "var(--font-sans)";
+            document.querySelectorAll('.output-room-title').forEach(el => el.style.fontFamily = fontValue);
+            attachAccordionEvents(); runAutoSpellChecker();
         });
 
         function runAutoSpellChecker() {
@@ -939,6 +905,7 @@
             const bodyBg = currentColorTheme === "roll20" ? "#e9eced" : "#111111";
             const bodyText = currentColorTheme === "roll20" ? "#232323" : "#e3e3e3";
 
+            // 테마별 서술 박스 형태 제어 속성 정의
             const isRoll20 = (currentColorTheme === "roll20");
             const narrBg = isRoll20 ? "transparent" : p.bg;
             const narrBorder = isRoll20 ? "none" : `1px solid ${p.border}`;
@@ -961,8 +928,8 @@
                 .msg { font-family:${chosenFont}; font-size:0.95rem; line-height:1.55; white-space:pre-wrap; flex:1; color:${p.text} !important; word-break:break-word; background:transparent !important; }
                 .name { font-size:0.85rem; font-weight:700; display:block; margin-bottom:2px; background:transparent !important; }
                 
-                /* 서술자 글자 크기 1px 축소 (0.95rem -> 0.89rem) */
-                .narrator { text-align:center; font-weight:700; font-style:italic; padding:${narrPadding}; color:${p.narrator} !important; width:100%; background:${narrBg} !important; border:${narrBorder}; font-size: 0.89rem; }
+                /* 서술자 스타일 - 가운데정렬, 볼드, 이텔릭, 배경 제어 반영 */
+                .narrator { text-align:center; font-weight:700; font-style:italic; padding:${narrPadding}; color:${p.narrator} !important; width:100%; background:${narrBg} !important; border:${narrBorder}; }
                 .system { color:${p.sys} !important; font-size:0.85rem; background:transparent !important; }
                 .divider { border-top:1px solid rgba(128,128,128,0.15); margin:6px 0; }
                 
@@ -988,6 +955,7 @@
                         res += !same ? (img ? `<img src="${img}" class="avatar">` : `<div class="avatar"></div>`) : `<div style="width:28px;flex-shrink:0"></div>`;
                         res += `<div>${!same?`<span class="name" style="color:${finalColor}">${spk}</span>`:''}<div class="msg">${cleanHTML}</div></div>`;
                     } else {
+                        // 저장 시 서술자 텍스트 볼드+이텔릭 유실 방지 보정
                         let styledContent = cleanHTML;
                         if(isN) {
                             if(!styledContent.includes('<i>') && !styledContent.includes('<em>')) {
