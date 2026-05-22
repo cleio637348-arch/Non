@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>논단군 코코포 로그 백업기</title>
+    <title>논단군 코코포 로그 백업기 (통합본)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=Hina+Mincho&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -111,12 +111,6 @@
             text-transform: uppercase; font-family: var(--font-ui);
         }
 
-        .section-icon {
-            width: 20px; height: 20px; border-radius: 0px;
-            background: var(--accent-soft); display: flex; align-items: center; justify-content: center;
-            font-size: 11px; flex-shrink: 0;
-        }
-
         .output-room-title {
             font-family: var(--current-font); font-size: 1.25rem; font-weight: 700;
             color: var(--title-color) !important; background-color: var(--title-bg) !important;
@@ -149,11 +143,8 @@
             transition: border-color 0.18s ease;
             font-family: var(--font-sans);
         }
-        input[type="text"]:focus, input[type="search"]:focus {
-            border-color: var(--border-active);
-        }
+        input[type="text"]:focus, input[type="search"]:focus { border-color: var(--border-active); }
         input[type="file"] { cursor: pointer; }
-        input::placeholder { color: var(--text-muted); }
 
         .switch-group {
             display: flex; gap: 6px; background: var(--bg-input); padding: 5px 6px;
@@ -182,7 +173,6 @@
         .filter-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 4px; }
         .filter-item { display: flex; align-items: center; gap: 7px; font-size: 0.84rem; cursor: pointer; color: var(--text-main); padding: 5px 8px; border-radius: 0px; border: 1px solid var(--border-notion); background: var(--bg-input); transition: border-color 0.15s; }
         .filter-item:hover { border-color: var(--border-active); }
-        .filter-item input { cursor: pointer; accent-color: #ffffff; }
 
         .btn-group { display: flex; gap: 8px; width: 100%; flex-wrap: wrap; }
         .notion-btn {
@@ -193,74 +183,32 @@
             white-space: nowrap;
         }
         .notion-btn:hover { border-color: var(--border-active); background: rgba(255,255,255,0.05); }
-        .btn-submit {
-            background: var(--accent-soft); border-color: rgba(255,255,255,0.2);
-            color: #ffffff; flex: 2; min-width: 100px;
-        }
+        .btn-submit { background: var(--accent-soft); border-color: rgba(255,255,255,0.2); color: #ffffff; flex: 2; min-width: 100px; }
         .btn-submit:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
         .btn-util { flex: 1; min-width: 80px; }
 
-        .spell-report-card {
-            background: var(--bg-card); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: var(--radius-lg); padding: 18px 20px; display: none;
-        }
-        .spell-report-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 10px; gap: 12px; flex-wrap: wrap;
-        }
+        .spell-report-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-lg); padding: 18px 20px; display: none; }
+        .spell-report-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 10px; gap: 12px; flex-wrap: wrap; }
         .spell-report-meta { display: flex; flex-direction: column; gap: 2px; }
         .spell-report-title { font-size: 0.88rem; font-weight: 700; color: var(--text-main); }
         .spell-report-sub { font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-ui); }
         .spell-report-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-        .spell-btn-all {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
-            color: #ffffff; border-radius: var(--radius-sm);
-            padding: 6px 14px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
-            transition: background 0.15s; font-family: var(--font-ui);
-        }
+        .spell-btn-all { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #ffffff; border-radius: var(--radius-sm); padding: 6px 14px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: var(--font-ui); }
         .spell-btn-all:hover { background: rgba(255,255,255,0.2); }
-        .spell-btn-dismiss {
-            background: none; border: 1px solid var(--border-notion);
-            color: var(--text-muted); border-radius: var(--radius-sm);
-            padding: 6px 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
-            transition: background 0.15s; font-family: var(--font-ui);
-        }
+        .spell-btn-dismiss { background: none; border: 1px solid var(--border-notion); color: var(--text-muted); border-radius: var(--radius-sm); padding: 6px 12px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: var(--font-ui); }
         .spell-btn-dismiss:hover { background: rgba(255,255,255,0.05); }
-        .spell-summary-bar {
-            display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
-        }
-        .spell-summary-chip {
-            display: inline-flex; align-items: center; gap: 5px;
-            background: var(--bg-input); border: 1px solid var(--border-notion);
-            border-radius: 0px; padding: 3px 10px; font-size: 0.74rem;
-            color: var(--text-label); font-family: var(--font-ui);
-        }
-        .spell-summary-chip .chip-count {
-            font-weight: 700; color: #ffffff;
-        }
+        .spell-summary-bar { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+        .spell-summary-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--bg-input); border: 1px solid var(--border-notion); padding: 3px 10px; font-size: 0.74rem; color: var(--text-label); font-family: var(--font-ui); }
+        .spell-summary-chip .chip-count { font-weight: 700; color: #ffffff; }
         
         .spell-report-list { max-height: 320px; overflow-y: auto; font-size: 0.82rem; display: flex; flex-direction: column; gap: 7px; }
-        .spell-report-item {
-            display: flex; align-items: flex-start; justify-content: space-between;
-            padding: 11px 14px; background: var(--bg-input);
-            border-radius: var(--radius-sm); border: 1px solid var(--border-notion); gap: 14px; cursor: pointer;
-            transition: border-color 0.15s, background 0.15s;
-        }
+        .spell-report-item { display: flex; align-items: flex-start; justify-content: space-between; padding: 11px 14px; background: var(--bg-input); border-radius: var(--radius-sm); border: 1px solid var(--border-notion); gap: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
         .spell-report-item:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.03); }
         .spell-report-item.is-fixed { opacity: 0.35; pointer-events: none; }
         .spell-context-box { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-        .spell-meta-tag {
-            font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-ui);
-            font-weight: 600; letter-spacing: 0.03em;
-        }
+        .spell-meta-tag { font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-ui); font-weight: 600; letter-spacing: 0.03em; }
         .spell-context-text { line-height: 1.55; color: var(--text-main); }
-        .spell-context-text s { color: #888888; text-decoration: line-through; opacity: 0.8; }
-        .spell-fix-trigger {
-            background: var(--accent-soft); border: 1px solid rgba(255,255,255,0.2);
-            color: #ffffff; border-radius: var(--radius-sm);
-            padding: 5px 12px; font-size: 0.76rem; font-weight: 600; cursor: pointer;
-            transition: background 0.15s; font-family: var(--font-ui); flex-shrink: 0; white-space: nowrap;
-        }
+        .spell-fix-trigger { background: var(--accent-soft); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; border-radius: var(--radius-sm); padding: 5px 12px; font-size: 0.76rem; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: var(--font-ui); flex-shrink: 0; white-space: nowrap; }
         .spell-fix-trigger:hover { background: rgba(255,255,255,0.25); }
 
         .script-container {
@@ -281,16 +229,12 @@
         .notion-row.row-flash { background-color: rgba(255,255,255,0.15) !important; }
 
         .content-cell { display: flex; align-items: flex-start; gap: 10px; flex: 1; width: 100%; overflow: hidden; }
-        .avatar-box { width: 28px; height: 28px; border-radius: 0px; object-fit: cover; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); background: #333; }
-        .avatar-placeholder { width: 28px; flex-shrink: 0; }
         
         .notion-block {
             flex: 1; padding: 1px 4px; border-radius: 0px; font-size: 0.95rem; line-height: 1.55; 
             word-break: break-word; outline: none; color: var(--script-text) !important; white-space: pre-wrap;
             font-family: var(--current-font); width: 100%;
         }
-
-        .notion-block button.del, .notion-block .row-control, .notion-block .del { display: none !important; }
 
         .control-cell { opacity: 0; transition: opacity 0.15s ease; flex-shrink: 0; position: absolute; right: 8px; top: 6px; z-index: 5; }
         .notion-row:hover .control-cell { opacity: 1; }
@@ -301,15 +245,14 @@
         }
         .row-control:hover { background: #ffffff; color: #000000; border-color: #ffffff; }
 
-        mark.log-match { background: #e2e8f0; color: #000; border-radius: 0px; padding: 0 2px; }
-        .notion-block b, .msg b { font-weight: bold; }
-        .notion-block i, .msg i { font-style: italic; }
-        .notion-block s, .msg s { text-decoration: line-through; }
+        .notion-block b { font-weight: bold; }
+        .notion-block i { font-style: italic; }
+        .notion-block s { text-decoration: line-through; }
         
-        .notion-block mark.hl-yellow, mark.hl-yellow { background-color: #e0e0e0 !important; color: #000000 !important; padding: 0 2px; border-radius: 0px; }
-        .notion-block mark.hl-green, mark.hl-green { background-color: #c0c0c0 !important; color: #000000 !important; padding: 0 2px; border-radius: 0px; }
-        .notion-block mark.hl-blue, mark.hl-blue { background-color: #a0a0a0 !important; color: #000000 !important; padding: 0 2px; border-radius: 0px; }
-        .notion-block mark.hl-pink, mark.hl-pink { background-color: #808080 !important; color: #ffffff !important; padding: 0 2px; border-radius: 0px; }
+        .notion-block mark.hl-yellow { background-color: #e0e0e0 !important; color: #000000 !important; padding: 0 2px; }
+        .notion-block mark.hl-green { background-color: #c0c0c0 !important; color: #000000 !important; padding: 0 2px; }
+        .notion-block mark.hl-blue { background-color: #a0a0a0 !important; color: #000000 !important; padding: 0 2px; }
+        .notion-block mark.hl-pink { background-color: #808080 !important; color: #ffffff !important; padding: 0 2px; }
 
         #textStyler {
             position: absolute; display: none;
@@ -317,10 +260,10 @@
             border-radius: var(--radius-sm); box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             z-index: 9999; padding: 5px 8px; gap: 4px; align-items: center;
         }
-        #textStyler button { background: none; border: none; color: #fff; font-size: 0.82rem; padding: 3px 7px; cursor: pointer; border-radius: 0px; font-weight: 600; transition: background 0.1s; }
+        #textStyler button { background: none; border: none; color: #fff; font-size: 0.82rem; padding: 3px 7px; cursor: pointer; font-weight: 600; transition: background 0.1s; }
         #textStyler button:hover { background: rgba(255,255,255,0.1); }
         .styler-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.12); }
-        .color-chip { width: 15px; height: 15px; border-radius: 0px; cursor: pointer; display: inline-block; border: 1px solid rgba(255, 255, 255, 0.3); transition: transform 0.1s; }
+        .color-chip { width: 15px; height: 15px; cursor: pointer; display: inline-block; border: 1px solid rgba(255, 255, 255, 0.3); transition: transform 0.1s; }
         .color-chip:hover { transform: scale(1.15); }
 
         .floating-history-panel {
@@ -329,7 +272,7 @@
             border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-md);
             padding: 5px 10px; display: flex; gap: 2px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); z-index: 10000;
         }
-        .history-btn { background: none; border: none; color: rgba(255, 255, 255, 0.8); font-size: 0.83rem; font-weight: 600; padding: 7px 12px; cursor: pointer; border-radius: 0px; transition: background 0.15s; font-family: var(--font-ui); }
+        .history-btn { background: none; border: none; color: rgba(255, 255, 255, 0.8); font-size: 0.83rem; font-weight: 600; padding: 7px 12px; cursor: pointer; transition: background 0.15s; font-family: var(--font-ui); }
         .history-btn:hover:not(:disabled) { background: rgba(255,255,255,0.08); }
         .history-btn:disabled { opacity: 0.25; cursor: not-allowed; }
         .btn-scroll-top { border-left: 1px solid rgba(255,255,255,0.15); margin-left: 2px; padding-left: 14px; }
@@ -339,15 +282,9 @@
         .state-system { font-family: var(--font-ui); font-size: 0.85rem; color: var(--script-sys) !important; }
         .character-divider { border-top: 1px solid rgba(255, 255, 255, 0.05); margin: 4px 0 2px 0; width: 100%; }
 
-        .empty-hint {
-            text-align: center; padding: 40px 20px; color: var(--text-muted);
-            font-size: 0.88rem; line-height: 1.7;
-        }
-        .empty-hint .hint-icon { font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.4; }
-
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 0px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
     </style>
 </head>
@@ -357,7 +294,7 @@
         <header>
             <div class="header-badge">TRPG 로그 백업기</div>
             <h1>논단군 코코포 로그 백업기</h1>
-            <p>직관적이고 편한 로그 백업기</p>
+            <p>직관적이고 편한 로그 백업기 (이름 분리 정밀화 버전)</p>
         </header>
 
         <div class="notion-card">
@@ -378,8 +315,8 @@
                 <div class="input-group">
                     <span class="input-label">3. 본문 스타일 선택</span>
                     <div class="switch-group">
-                        <label class="switch-item"><input type="radio" name="colorTheme" value="roll20"> Roll20 </label>
-                        <label class="switch-item"><input type="radio" name="colorTheme" value="ccfolia" checked> 코코포리아</label>
+                        <label class="switch-item"><input type="radio" name="colorTheme" value="roll20"> 흰색 배경 (Roll20)</label>
+                        <label class="switch-item"><input type="radio" name="colorTheme" value="ccfolia" checked> 검은색 배경 (코코포리아)</label>
                     </div>
                 </div>
                 <div class="input-group">
@@ -425,7 +362,7 @@
             <div class="spell-report-header">
                 <div class="spell-report-meta">
                     <div class="spell-report-title">맞춤법 교정 리포트</div>
-                    <div class="spell-report-sub">TRPG 세션 특화 고정밀 엔진</div>
+                    <div class="spell-report-sub">TRPG 세션 특화 엔진</div>
                 </div>
                 <div class="spell-report-actions">
                     <button id="btnSpellFixAll" class="spell-btn-all">모두 교정</button>
@@ -473,117 +410,23 @@
             { wrong: /됬/g, right: "됐", cat: "맞춤법" },
             { wrong: /되었다/g, right: "됐다", cat: "맞춤법" },
             { wrong: /되었어/g, right: "됐어", cat: "맞춤법" },
-            { wrong: /되었고/g, right: "됐고", cat: "맞춤법" },
-            { wrong: /되었니/g, right: "됐니", cat: "맞춤법" },
-            { wrong: /되었던/g, right: "됐던", cat: "맞춤법" },
             { wrong: /됬음/g, right: "됐음", cat: "맞춤법" },
             { wrong: /됬다/g, right: "됐다", cat: "맞춤법" },
-
             { wrong: /않하고/g, right: "안 하고", cat: "맞춤법" },
             { wrong: /않돼/g, right: "안 돼", cat: "맞춤법" },
-            { wrong: /않된다/g, right: "안 된다", cat: "맞춤법" },
             { wrong: /않해/g, right: "안 해", cat: "맞춤법" },
-            { wrong: /않되/g, right: "안 되", cat: "맞춤법" },
-            { wrong: /않봐/g, right: "안 봐", cat: "맞춤법" },
-            { wrong: /않가/g, right: "안 가", cat: "맞춤법" },
-            { wrong: /않먹/g, right: "안 먹", cat: "맞춤법" },
-            { wrong: /않오/g, right: "안 오", cat: "맞춤법" },
-            { wrong: /않좋/g, right: "안 좋", cat: "맞춤법" },
-
             { wrong: /안되나요/g, right: "안 되나요", cat: "띄어쓰기" },
-            { wrong: /안되죠/g, right: "안 되죠", cat: "띄어쓰기" },
-            { wrong: /안되는/g, right: "안 되는", cat: "띄어쓰기" },
             { wrong: /안된다/g, right: "안 된다", cat: "띄어쓰기" },
-            { wrong: /안된/g, right: "안 된", cat: "띄어쓰기" },
-            { wrong: /안해/g, right: "안 해", cat: "띄어쓰기" },
-            { wrong: /안봐/g, right: "안 봐", cat: "띄어쓰기" },
-            { wrong: /안와/g, right: "안 와", cat: "띄어쓰기" },
-            { wrong: /안가/g, right: "안 가", cat: "띄어쓰기" },
-            { wrong: /안좋은/g, right: "안 좋은", cat: "띄어쓰기" },
-            { wrong: /안좋아/g, right: "안 좋아", cat: "띄어쓰기" },
-
             { wrong: /어의없/g, right: "어처구니없", cat: "맞춤법" },
             { wrong: /바램/g, right: "바람", cat: "맞춤법" },
-            { wrong: /그라믄/g, right: "그러면", cat: "맞춤법" },
-            { wrong: /뒤짚/g, right: "뒤집", cat: "맞춤법" },
-            { wrong: /잇나요/g, right: "있나요", cat: "맞춤법" },
-            { wrong: /금새/g, right: "금세", cat: "맞춤법" },
-            { wrong: /팅기/g, right: "튕기", cat: "맞춤법" },
-            { wrong: /어떻해/g, right: "어떡해", cat: "맞춤법" },
-            { wrong: /어떻게해/g, right: "어떻게 해", cat: "맞춤법" },
             { wrong: /구지/g, right: "굳이", cat: "맞춤법" },
-            { wrong: /마추다/g, right: "맞추다", cat: "맞춤법" },
-            { wrong: /마춰/g, right: "맞춰", cat: "맞춤법" },
-            { wrong: /문난/g, right: "무난", cat: "맞춤법" },
             { wrong: /역활/g, right: "역할", cat: "맞춤법" },
             { wrong: /괞찮/g, right: "괜찮", cat: "맞춤법" },
-            { wrong: /오랫만/g, right: "오랜만", cat: "맞춤법" },
             { wrong: /몇일/g, right: "며칠", cat: "맞춤법" },
-            { wrong: /몆일/g, right: "며칠", cat: "맞춤법" },
-            { wrong: /왠지모르/g, right: "왠지 모르", cat: "맞춤법" },
-            { wrong: /웬지/g, right: "왠지", cat: "맞춤법" },
-            { wrong: /웬만하면/g, right: "웬만하면", cat: "맞춤법" },
-            { wrong: /어떻하/g, right: "어떡하", cat: "맞춤법" },
-            { wrong: /틀리다/g, right: "다르다", cat: "맞춤법" }, 
-            { wrong: /재밋/g, right: "재밌", cat: "맞춤법" },
-            { wrong: /낳은/g, right: "나은", cat: "맞춤법" }, 
-            { wrong: /더낳은/g, right: "더 나은", cat: "맞춤법" },
-            { wrong: /낳아/g, right: "나아", cat: "맞춤법" },
-            { wrong: /설레임/g, right: "설렘", cat: "맞춤법" },
-            { wrong: /연예인/g, right: "연예인", cat: "" },
-            { wrong: /바래어/g, right: "바라어", cat: "맞춤법" },
-            { wrong: /희안한/g, right: "희한한", cat: "맞춤법" },
-            { wrong: /희안하/g, right: "희한하", cat: "맞춤법" },
-            { wrong: /얘기체/g, right: "체", cat: "" },
-
             { wrong: /할거야/g, right: "할 거야", cat: "띄어쓰기" },
-            { wrong: /할거에요/g, right: "할 거예요", cat: "띄어쓰기" },
-            { wrong: /할수/g, right: "할 수", cat: "띄어쓰기" },
             { wrong: /할수있다/g, right: "할 수 있다", cat: "띄어쓰기" },
-            { wrong: /할수없는/g, right: "할 수 없는", cat: "띄어쓰기" },
-            { wrong: /했는 대/g, right: "했는데", cat: "띄어쓰기" },
-            { wrong: /맞는것/g, right: "맞는 것", cat: "띄어쓰기" },
-            { wrong: /하는것/g, right: "하는 것", cat: "띄어쓰기" },
-            { wrong: /이런것/g, right: "이런 것", cat: "띄어쓰기" },
-            { wrong: /그런것/g, right: "그런 것", cat: "띄어쓰기" },
-            { wrong: /저런것/g, right: "저런 것", cat: "띄어쓰기" },
-            { wrong: /있는것/g, right: "있는 것", cat: "띄어쓰기" },
-            { wrong: /없는것/g, right: "없는 것", cat: "띄어쓰기" },
-            { wrong: /못해/g, right: "못 해", cat: "띄어쓰기" },
-            { wrong: /못하는/g, right: "못 하는", cat: "띄어쓰기" },
-            { wrong: /못봐/g, right: "못 봐", cat: "띄어쓰기" },
-            { wrong: /못가/g, right: "못 가", cat: "띄어쓰기" },
-            { wrong: /해볼까/g, right: "해 볼까", cat: "띄어쓰기" },
-            { wrong: /해볼게/g, right: "해 볼게", cat: "띄어쓰기" },
-            { wrong: /해보자/g, right: "해 보자", cat: "띄어쓰기" },
-            { wrong: /해보면/g, right: "해 보면", cat: "띄어쓰기" },
-            { wrong: /해봐/g, right: "해 봐", cat: "띄어쓰기" },
-            { wrong: /가볼까/g, right: "가 볼까", cat: "띄어쓰기" },
-            { wrong: /가봐야/g, right: "가 봐야", cat: "띄어쓰기" },
-            { wrong: /내꺼/g, right: "내 것", cat: "맞춤법" },
-            { wrong: /니꺼/g, right: "네 것", cat: "맞춤법" },
-            { wrong: /네꺼/g, right: "네 것", cat: "맞춤법" },
-            { wrong: /먹을때/g, right: "먹을 때", cat: "띄어쓰기" },
-            { wrong: /갈때/g, right: "갈 때", cat: "띄어쓰기" },
-            { wrong: /할때/g, right: "할 때", cat: "띄어쓰기" },
-            { wrong: /했을때/g, right: "했을 때", cat: "띄어쓰기" },
-
-            { wrong: /던젼/g, right: "던전", cat: "맞춤법" },
-            { wrong: /케릭터/g, right: "캐릭터", cat: "맞춤법" },
-            { wrong: /보스몹/g, right: "보스 몹", cat: "띄어쓰기" },
-            { wrong: /아이템창/g, right: "아이템 창", cat: "띄어쓰기" },
-            { wrong: /다이스롤/g, right: "다이스 롤", cat: "띄어쓰기" },
-            { wrong: /크리티컬히트/g, right: "크리티컬 히트", cat: "띄어쓰기" },
-
-            { wrong: /-(이)에요$/g, right: "예요", cat: "맞춤법" },
-            { wrong: /이예요/g, right: "이에요", cat: "맞춤법" },
-            { wrong: /할려구/g, right: "하려고", cat: "맞춤법" },
-            { wrong: /할려고/g, right: "하려고", cat: "맞춤법" },
-            { wrong: /먹을려고/g, right: "먹으려고", cat: "맞춤법" },
-            { wrong: /가다시피/g, right: "가다시피", cat: "" },
-            { wrong: /하는 지/g, right: "하는지", cat: "띄어쓰기" },
-            { wrong: /했는 지/g, right: "했는지", cat: "띄어쓰기" }
-        ].filter(r => r.cat !== "");
+            { wrong: /케릭터/g, right: "캐릭터", cat: "맞춤법" }
+        ];
 
         const themeProfiles = {
             roll20: { bg: "#ffffff", text: "#111111", fallbackName: "#333333", narrator: "#000000", sys: "#666666", border: "#e0e0e0", title: "#111111", titleBg: "#ffffff", titleBorder: "rgba(0,0,0,0.15)" },
@@ -591,6 +434,7 @@
         };
 
         function applyColorTheme(themeName) {
+            currentColorTheme = themeName;
             const p = themeProfiles[themeName];
             const root = document.documentElement;
             root.style.setProperty('--script-bg', p.bg);
@@ -604,7 +448,7 @@
         }
 
         document.querySelectorAll('input[name="colorTheme"]').forEach(radio => {
-            radio.addEventListener('change', (e) => { currentColorTheme = e.target.value; applyColorTheme(currentColorTheme); });
+            radio.addEventListener('change', (e) => { applyColorTheme(e.target.value); });
         });
         applyColorTheme("ccfolia"); 
 
@@ -613,7 +457,6 @@
                 currentFontType = e.target.value;
                 const fontValue = currentFontType === "serif" ? "var(--font-serif)" : "var(--font-sans)";
                 document.documentElement.style.setProperty('--current-font', fontValue);
-                document.querySelectorAll('.output-room-title').forEach(el => el.style.fontFamily = fontValue);
             });
         });
 
@@ -623,38 +466,40 @@
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(event) {
-                const parser = new DOMParser(); const doc = parser.parseFromString(event.target.result, 'text/html');
-                globalRoomTitle = file.name.replace(/\.html$/i, "").replace(/\[all\]$/i, "").trim();
+                const parser = new DOMParser(); 
+                const doc = parser.parseFromString(event.target.result, 'text/html');
+                globalRoomTitle = file.name.replace(/\.html$/i, "").trim();
                 
-                let lines = doc.querySelectorAll('p, .msg, .chat-line'); if(lines.length === 0) lines = doc.querySelectorAll('body > div');
+                let lines = doc.querySelectorAll('p, .msg, .chat-line, div');
                 rawLogData = []; detectedTabs.clear(); detectedCharacters.clear();
                 
                 lines.forEach(p => {
-                    if (p.querySelector('p')) return; const text = p.textContent.trim(); if(!text) return;
-                    let avatarSrc = p.querySelector('img')?.getAttribute('src') || "";
-                    
-                    // 기존 로그 색상 추출 시도 (색상이 있을 경우)
-                    let extractedColor = "";
-                    let colorEl = p.querySelector('span[style*="color"]');
-                    if (colorEl) {
-                        let styleStr = colorEl.getAttribute('style');
-                        let matchColor = styleStr.match(/color\s*:\s*([^;]+)/i);
-                        if (matchColor) extractedColor = matchColor[1].trim();
-                    }
+                    if (p.children.length > 0 && p.querySelector('p')) return; 
+                    const text = p.innerText ? p.innerText.trim() : p.textContent.trim();
+                    if(!text) return;
 
-                    const match = text.match(/^\[([^\]]+)\]\s*([^:]+)\s*:\s*([\s\S]*)$/);
-                    if (match) {
-                        let tabName = match[1].trim(); let charName = match[2].trim(); let msgBody = match[3].trim();
+                    // 이름 : 대사 매칭 정규식 최적화 및 공백 유연성 확보
+                    const tabMatch = text.match(/^\[([^\]]+)\]\s*([^:]+)\s*:\s*([\s\S]*)$/);
+                    if (tabMatch) {
+                        let tabName = tabMatch[1].trim(); 
+                        let charName = tabMatch[2].trim(); 
+                        let msgBody = tabMatch[3].trim();
                         detectedTabs.add(tabName); detectedCharacters.add(charName);
-                        rawLogData.push({ tab: tabName, name: charName, message: msgBody, avatar: avatarSrc, color: extractedColor });
+                        rawLogData.push({ tab: tabName, name: charName, message: msgBody });
                     } else {
                         const simpleMatch = text.match(/^([^:]+)\s*:\s*([\s\S]*)$/);
                         if(simpleMatch) {
-                            let charName = simpleMatch[1].trim(); let msgBody = simpleMatch[2].trim();
-                            detectedTabs.add("Main"); detectedCharacters.add(charName);
-                            rawLogData.push({ tab: "Main", name: charName, message: msgBody, avatar: avatarSrc, color: extractedColor });
+                            let charName = simpleMatch[1].trim(); 
+                            let msgBody = simpleMatch[2].trim();
+                            // 만약 이름 부분에 시스템 컴포넌트 성격이 강하면 시스템으로 우회
+                            if (charName.includes('\n') || charName.length > 20) {
+                                rawLogData.push({ tab: "시스템", name: "", message: text });
+                            } else {
+                                detectedTabs.add("Main"); detectedCharacters.add(charName);
+                                rawLogData.push({ tab: "Main", name: charName, message: msgBody });
+                            }
                         } else {
-                            rawLogData.push({ tab: "시스템", name: "", message: text, avatar: "", color: "" });
+                            rawLogData.push({ tab: "시스템", name: "", message: text });
                         }
                     }
                 });
@@ -665,11 +510,8 @@
 
         function buildFilters() {
             const container = document.getElementById('dynamicFilters'); container.innerHTML = "";
-            const sortedTabs = Array.from(detectedTabs).sort((a, b) => {
-                if (a.toLowerCase() === 'main') return -1;
-                if (b.toLowerCase() === 'main') return 1;
-                return a.localeCompare(b);
-            });
+            const sortedTabs = Array.from(detectedTabs).sort();
+            if(sortedTabs.length === 0) sortedTabs.push("Main");
             sortedTabs.forEach(tab => {
                 const label = document.createElement('label'); label.className = "filter-item";
                 label.innerHTML = `<input type="checkbox" class="tab-chk" value="${tab}" checked> <span>${tab}</span>`;
@@ -684,21 +526,8 @@
                 panel.innerHTML = `<span style="color: var(--text-muted); font-size: 0.85rem;">추출된 캐릭터가 없습니다.</span>`; return;
             }
             sortedChars.forEach(char => {
-                // 로그 전체에서 해당 캐릭터가 가진 추출된 고유 컬러 확인
-                let matchedLog = rawLogData.find(l => l.name === char && l.color !== "");
-                let defaultVal = matchedLog ? matchedLog.color : p.fallbackName;
-                
-                // RGB 혹은 잘못된 형식일 때 브라우저 호환용 hex 변환 방어코드 (기본 # 형태로 파싱)
-                if(defaultVal.startsWith('rgb')) {
-                    defaultVal = p.fallbackName; 
-                } else if(!defaultVal.startsWith('#') && defaultVal.length === 6) {
-                    defaultVal = '#' + defaultVal;
-                } else if(!defaultVal.startsWith('#')) {
-                    defaultVal = p.fallbackName;
-                }
-
                 const item = document.createElement('div'); item.className = "color-picker-item";
-                item.innerHTML = `<span title="${char}">${char}</span><input type="color" class="char-color-input" data-char="${char}" value="${defaultVal}">`;
+                item.innerHTML = `<span title="${char}">${char}</span><input type="color" class="char-color-input" data-char="${char}" value="${currentColorTheme === 'roll20' ? '#111111' : '#cccccc'}">`;
                 panel.appendChild(item);
             });
         }
@@ -754,18 +583,13 @@
             const charColorMap = getCharacterColorMap();
             const selectedTabs = Array.from(document.querySelectorAll('.tab-chk:checked')).map(c => c.value);
             
-            selectedTabs.sort((a, b) => {
-                if (a.toLowerCase() === 'main') return -1;
-                if (b.toLowerCase() === 'main') return 1;
-                return a.localeCompare(b);
-            });
+            if(selectedTabs.length === 0) selectedTabs.push("Main");
 
             const dynamicTabsOutput = document.getElementById('dynamicTabsOutput');
             dynamicTabsOutput.innerHTML = ""; const tabContainers = {}; const tabLastSpeakerType = {}; 
 
             selectedTabs.forEach(t => {
                 const card = document.createElement('div'); card.className = "notion-card";
-                card.id = `card_${t.replace(/[^a-zA-Z0-9]/g, '_')}`;
                 card.innerHTML = `
                     <div class="notion-label">세션 로그 채널 — [${t}]</div>
                     <h2 class="output-room-title">${globalRoomTitle} - ${t}</h2>
@@ -779,8 +603,8 @@
             
             rawLogData.forEach(log => {
                 let currentTargetTab = log.tab;
-                if(log.tab === "시스템") { currentTargetTab = selectedTabs[0] || null; }
-                if(!currentTargetTab || !selectedTabs.includes(currentTargetTab)) return;
+                if(log.tab === "시스템") { currentTargetTab = selectedTabs[0] || "Main"; }
+                if(!tabContainers[currentTargetTab]) return;
                 
                 const targetContainer = tabContainers[currentTargetTab];
                 const isNarr = narrator && log.name === narrator; const isSys = log.name === "";
@@ -793,15 +617,14 @@
                 const same = (lastType === currentType && !isNarr && !isSys); tabLastSpeakerType[currentTargetTab] = currentType;
 
                 const row = document.createElement('div'); row.className = "notion-row"; row.dataset.tab = currentTargetTab; row.dataset.speaker = log.name;
-                let cleanMessage = log.message.replace(/<button[^>]*class="[^"]*del[^"]*"[^>]*>.*?<\/button>/gi, '').replace(/<button[^>]*>del<\/button>/gi, '').replace(/class="[^"]*del[^"]*"/gi, '');
 
                 let inner = `<div class="content-cell">`;
                 if(!isNarr && !isSys) {
-                    const assignedColor = charColorMap[log.name] || p.fallbackName;
-                    inner += same ? `<div class="avatar-placeholder"></div>` : (log.avatar ? `<img src="${log.avatar}" class="avatar-box">` : `<div class="avatar-box"></div>`);
-                    inner += `<div style="flex:1;">${!same ? `<span class="char-name" style="color:${assignedColor}">${log.name}</span>`:''}<div class="notion-block" contenteditable="true" spellcheck="false">${cleanMessage}</div></div>`;
+                    const assignedColor = charColorMap[log.name] || (currentColorTheme === 'roll20' ? '#111111' : '#cccccc');
+                    inner += same ? `<div style="width:28px; flex-shrink:0;"></div>` : `<div style="width:5px; flex-shrink:0;"></div>`;
+                    inner += `<div style="flex:1;">${!same ? `<span class="char-name" style="color:${assignedColor}">${log.name}</span>`:''}<div class="notion-block" contenteditable="true" spellcheck="false">${log.message}</div></div>`;
                 } else {
-                    inner += `<div class="notion-block ${isNarr?'state-narrator':'state-system'}" contenteditable="true" spellcheck="false">${cleanMessage}</div>`;
+                    inner += `<div class="notion-block ${isNarr?'state-narrator':'state-system'}" contenteditable="true" spellcheck="false">${log.message}</div>`;
                 }
                 inner += `</div><div class="control-cell"><button class="row-control" onclick="saveHistoryState(); this.closest('.notion-row').remove();">del</button></div>`;
                 
@@ -824,8 +647,6 @@
             const blocks = document.querySelectorAll('.notion-block');
             let detected = [];
             blocks.forEach((block, idx) => {
-                const tab = block.closest('.notion-row')?.dataset.tab || "";
-                if (tab.includes("잡담") || tab.toLowerCase().includes("talk")) return;
                 const text = block.innerText;
                 spellRules.forEach(rule => {
                     if (rule.wrong.test(text)) {
@@ -842,52 +663,26 @@
                 });
             });
             
-            const seen = new Set();
-            detected = detected.filter(d => {
-                const key = d.el.textContent.slice(0,30) + d.rule.right;
-                if (seen.has(key)) return false;
-                seen.add(key); return true;
-            });
-            
             if (detected.length > 0) {
                 reportCard.style.display = "block";
-                
-                const cats = {};
-                detected.forEach(d => { cats[d.rule.cat] = (cats[d.rule.cat] || 0) + 1; });
-                Object.entries(cats).forEach(([cat, cnt]) => {
-                    const chip = document.createElement('div'); chip.className = "spell-summary-chip";
-                    chip.innerHTML = `<span>${cat}</span><span class="chip-count">${cnt}건</span>`;
-                    summaryBar.appendChild(chip);
-                });
-                const totalChip = document.createElement('div'); totalChip.className = "spell-summary-chip";
-                totalChip.innerHTML = `<span>전체</span><span class="chip-count">${detected.length}건</span>`;
-                summaryBar.prepend(totalChip);
+                const chip = document.createElement('div'); chip.className = "spell-summary-chip";
+                chip.innerHTML = `<span>발견된 맞춤법 오류</span><span class="chip-count">${detected.length}건</span>`;
+                summaryBar.appendChild(chip);
                 
                 detected.forEach((issue) => {
                     const item = document.createElement('div'); item.className = "spell-report-item";
-                    issue.rule.wrong.lastIndex = 0;
-                    const previewText = issue.el.innerText.replace(issue.rule.wrong, (m) =>
-                        `<s style="color:#888888; text-decoration:line-through;">${m}</s> <span style="color:#ffffff; font-weight:600">→ ${issue.rule.right}</span>`
-                    );
-                    issue.rule.wrong.lastIndex = 0;
                     item.innerHTML = `
                         <div class="spell-context-box">
-                            <span class="spell-meta-tag">${issue.line}행 · ${issue.speaker} · <span style="color:var(--text-main)">${issue.rule.cat}</span></span>
-                            <div class="spell-context-text">${previewText}</div>
+                            <span class="spell-meta-tag">${issue.line}행 · ${issue.speaker}</span>
+                            <div class="spell-context-text"><s>${issue.rule.wrong.source}</s> → <strong>${issue.rule.right}</strong></div>
                         </div>
                         <button class="spell-fix-trigger">교정</button>`;
-                    item.addEventListener('click', (e) => {
-                        if (e.target.classList.contains('spell-fix-trigger')) return;
-                        issue.row?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        issue.row?.classList.add('row-flash');
-                        setTimeout(() => issue.row?.classList.remove('row-flash'), 1000);
-                    });
+                    
                     item.querySelector('.spell-fix-trigger').addEventListener('click', (e) => {
                         e.stopPropagation();
                         saveHistoryState();
                         issue.rule.wrong.lastIndex = 0;
                         issue.el.innerHTML = issue.el.innerHTML.replace(issue.rule.wrong, issue.rule.right);
-                        issue.rule.wrong.lastIndex = 0;
                         item.classList.add('is-fixed');
                     });
                     reportList.appendChild(item);
@@ -896,11 +691,7 @@
         }
 
         document.getElementById('btnSpellFixAll').addEventListener('click', () => {
-            const buttons = document.querySelectorAll('.spell-fix-trigger:not([disabled])');
-            const active = Array.from(buttons).filter(b => !b.closest('.is-fixed'));
-            if (active.length === 0) return;
-            saveHistoryState();
-            active.forEach(btn => btn.click());
+            document.querySelectorAll('.spell-report-item:not(.is-fixed) .spell-fix-trigger').forEach(btn => btn.click());
         });
 
         document.getElementById('btnSpellDismiss').addEventListener('click', () => {
@@ -911,37 +702,26 @@
             const chosenFont = currentFontType === "serif" ? `'Hina Mincho', 'Noto Serif KR', serif` : `'Noto Sans KR', sans-serif`;
             const p = themeProfiles[currentColorTheme]; const charColorMap = getCharacterColorMap();
             
-            const bodyBg = currentColorTheme === "roll20" ? "#ffffff" : "#111111";
-            const bodyText = currentColorTheme === "roll20" ? "#111111" : "rgba(255,255,255,0.85)";
+            const bodyBg = p.bg;
+            const bodyText = p.text;
 
             let out = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>세션 로그 백업</title><style>
                 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=Hina+Mincho&display=swap');
                 * { box-sizing: border-box; margin: 0; padding: 0; }
-                html, body { background-color: ${bodyBg} !important; }
-                body { color: ${bodyText} !important; font-family:'Noto Sans KR', sans-serif; padding: 50px 24px; display: flex; flex-direction: column; align-items: center; }
+                body { background-color: ${bodyBg} !important; color: ${bodyText} !important; font-family:'Noto Sans KR', sans-serif; padding: 50px 24px; display: flex; flex-direction: column; align-items: center; }
                 .page-wrap { width: 100%; max-width: 850px; }
-                
-                h1 { font-family:${chosenFont}; font-size:1.4rem; text-align:center; color:${p.title} !important; background-color:${p.titleBg} !important; border:1px solid ${p.titleBorder} !important; border-radius:0; padding:14px; margin-bottom:14px; font-weight:700; cursor:pointer; user-select:none; }
-                h1::after { content:" ▾"; font-size:0.8rem; opacity:0.5; }
-                
-                .script-box { display:flex; flex-direction:column; gap:1px; background:${p.bg} !important; padding:20px; border-radius:0; border:1px solid ${p.border}; margin-bottom:28px; width:100%; }
-                .script-box.collapsed { display:none !important; }
+                h1 { font-family:${chosenFont}; font-size:1.4rem; text-align:center; color:${p.title} !important; background-color:${p.titleBg} !important; border:1px solid ${p.titleBorder} !important; padding:14px; margin-bottom:14px; font-weight:700; }
+                .script-box { display:flex; flex-direction:column; gap:1px; background:${p.bg} !important; padding:20px; border:1px solid ${p.border}; margin-bottom:28px; width:100%; }
                 .row { display:flex; align-items:flex-start; gap:12px; padding:5px 6px; width:100%; }
-                .avatar { width:28px; height:28px; border-radius:0; object-fit:cover; flex-shrink:0; background:#444; }
-                
-                .msg { font-family:${chosenFont}; font-size:0.95rem; line-height:1.55; white-space:pre-wrap; flex:1; color:${p.text} !important; word-break:break-word; background:transparent !important; }
-                .name { font-weight:700; background:transparent !important; }
-                
-                /* 서술자 대사 스타일: 가운데 가로 정렬 고정 */
-                .narrator { text-align:center !important; justify-content:center !important; font-weight:700; font-style:italic; padding:3px 10px; color:${p.narrator} !important; width:100%; background:transparent !important; }
-                .system { color:${p.sys} !important; font-size:0.85rem; background:transparent !important; }
+                .msg { font-family:${chosenFont}; font-size:0.95rem; line-height:1.55; white-space:pre-wrap; flex:1; color:${p.text} !important; word-break:break-word; }
+                .name { font-size:0.85rem; font-weight:700; display:block; margin-bottom:2px; }
+                .narrator { text-align:center; font-weight:700; font-style:italic; padding:3px 10px; color:${p.narrator} !important; width:100%; }
+                .system { color:${p.sys} !important; font-size:0.85rem; }
                 .divider { border-top:1px solid rgba(128,128,128,0.15); margin:6px 0; }
-                
                 mark.hl-yellow { background-color:#e0e0e0 !important; color:#000 !important; padding:1px 3px; }
                 mark.hl-green { background-color:#c0c0c0 !important; color:#000 !important; padding:1px 3px; }
                 mark.hl-blue { background-color:#a0a0a0 !important; color:#000 !important; padding:1px 3px; }
                 mark.hl-pink { background-color:#808080 !important; color:#fff !important; padding:1px 3px; }
-                b { font-weight:bold; } i { font-style:italic; } s { text-decoration:line-through; }
             </style></head><body><div class="page-wrap">`;
 
             const process = (nodes) => {
@@ -949,26 +729,15 @@
                 nodes.forEach(el => {
                     if(el.classList.contains('character-divider')) { res+='<div class="divider"></div>'; return; }
                     const block = el.querySelector('.notion-block'); if(!block) return;
-                    let cleanHTML = block.innerHTML.replace(/<button[^>]*>.*?<\/button>/gi, '').replace(/del/gi, ''); 
+                    let cleanHTML = block.innerHTML; 
 
                     const isN = block.classList.contains('state-narrator'), isS = block.classList.contains('state-system');
                     const spk = el.dataset.speaker || ""; const same = (last === spk && !isN && !isS); last = (isN?"_N":isS?"_S":spk);
-                    
                     res += '<div class="row">';
                     if(!isN && !isS) {
-                        const img = el.querySelector('.avatar-box')?.src; const finalColor = charColorMap[spk] || p.fallbackName;
-                        // 프로필 이미지 영역
-                        res += !same ? (img ? `<img src="${img}" class="avatar">` : `<div class="avatar"></div>`) : `<div style="width:28px;flex-shrink:0"></div>`;
-                        
-                        // [이름 : 대사] 포맷을 단일 .msg 블록 내부에 구조화하여 한 줄로 정렬 및 출력 처리
-                        res += `<div><div class="msg"><span class="name" style="color:${finalColor}">${spk}</span> : ${cleanHTML}</div></div>`;
-                    } else if (isN) {
-                        // 서술자 대사는 전체를 가운데 정렬되도록 클래스 부여
-                        res += `<div class="msg narrator">${cleanHTML}</div>`;
-                    } else {
-                        // 시스템 메시지
-                        res += `<div class="msg system">${cleanHTML}</div>`;
-                    }
+                        const finalColor = charColorMap[spk] || (currentColorTheme === 'roll20' ? '#111111' : '#cccccc');
+                        res += `<div>${!same?`<span class="name" style="color:${finalColor}">${spk}</span>`:''}<div class="msg">${cleanHTML}</div></div>`;
+                    } else res += `<div class="msg ${isN?'narrator':'system'}">${cleanHTML}</div>`;
                     res += '</div>';
                 }); return res;
             };
@@ -976,8 +745,8 @@
             const cards = document.querySelectorAll('#dynamicTabsOutput > .notion-card');
             cards.forEach((card, idx) => {
                 const titleText = card.querySelector('.output-room-title').innerText;
-                out += `<h1 onclick="const box=document.getElementById('box_${idx}'); box.style.display=(box.style.display==='none'?'flex':'none');">${titleText}</h1>`;
-                out += `<div id="box_${idx}" class="script-box">${process(card.querySelectorAll('.script-container > div'))}</div>`;
+                out += `<h1>${titleText}</h1>`;
+                out += `<div class="script-box">${process(card.querySelectorAll('.script-container > div'))}</div>`;
             });
             return out + '</div></body></html>';
         }
@@ -986,8 +755,7 @@
             navigator.clipboard.writeText(buildFinal()).then(() => {
                 const btn = document.getElementById('btnCopy');
                 const orig = btn.textContent; btn.textContent = "복사 완료";
-                btn.style.color = "var(--success)"; btn.style.borderColor = "var(--border-active)";
-                setTimeout(() => { btn.textContent = orig; btn.style.color = ""; btn.style.borderColor = ""; }, 2000);
+                setTimeout(() => { btn.textContent = orig; }, 2000);
             });
         });
         
