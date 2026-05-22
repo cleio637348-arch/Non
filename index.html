@@ -97,14 +97,14 @@
         .script-container { display: flex; flex-direction: column; gap: 1px; background-color: var(--script-bg); padding: 16px; border: 1px solid var(--script-border); width: 100%; }
         .script-container.collapsed { display: none !important; }
 
-        /* 에디터 내부 공통 행 스타일 */
+        /* 에디터용 본문 행 스타일 및 포커싱 상태 배경색 강제 지정자 */
         .notion-row { 
             display: flex; align-items: center; justify-content: space-between; gap: 12px; 
             padding: 5px 8px; position: relative; width: 100%; transition: background-color 0.15s;
         }
         .notion-row:hover { background: rgba(255, 255, 255, 0.04); }
 
-        /* [요구사항] 에디터 내 포커싱 상태 및 더블클릭 고정 선택자 */
+        /* 행 포커싱 및 더블클릭 상태 (.is-focused-black) 커스텀 선택자 배경색 우선처리 */
         .notion-row:focus-within, .notion-row.is-focused-black {
             background-color: #000000 !important;
             color: #ffffff !important;
@@ -112,7 +112,7 @@
         .notion-row:focus-within .notion-block, .notion-row.is-focused-black .notion-block {
             color: #ffffff !important;
         }
-        .notion-row:focus-within .state-system-text, .notion-row.is-focused-black .state-system-text {
+        .notion-row:focus-within .state-system, .notion-row.is-focused-black .state-system {
             color: #dddddd !important;
         }
         .notion-row:focus-within .char-name, .notion-row.is-focused-black .char-name,
@@ -126,7 +126,7 @@
         
         .notion-block { flex: 1; padding: 1px 4px; font-size: 0.95rem; line-height: 1.55; word-break: break-word; outline: none; color: var(--script-text) !important; white-space: pre-wrap; font-family: var(--current-font); width: 100%; }
 
-        /* Roll20 단락 구조 */
+        /* Roll20 전용 한 줄 레이아웃 디자인 */
         .roll20-layout { display: flex; align-items: flex-start; gap: 5px; flex-wrap: wrap; width: 100%; }
         .roll20-layout .char-name-inline { font-weight: 700; font-size: 0.95rem; white-space: nowrap; margin-right: 4px; }
 
@@ -134,21 +134,30 @@
         .notion-row:hover .control-cell { opacity: 1; }
         .row-control { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; cursor: pointer; font-size: 0.7rem; padding: 2px 7px; }
 
+        /* 드래그 텍스트 툴바 에디터 연동 */
+        #textStyler {
+            position: absolute; display: none; background: #222222; border: 1px solid rgba(255,255,255,0.15);
+            z-index: 9999; padding: 5px 8px; gap: 4px; align-items: center;
+        }
+        #textStyler button { background: none; border: none; color: #fff; font-size: 0.82rem; padding: 3px 7px; cursor: pointer; font-weight: 600; }
+        #textStyler button:hover { background: rgba(255,255,255,0.1); }
+        .styler-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.12); }
+        .color-chip { width: 15px; height: 15px; cursor: pointer; display: inline-block; border: 1px solid rgba(255, 255, 255, 0.3); }
+
+        /* 형광펜 효과 색상 노드 매핑 */
+        .notion-block mark.hl-yellow, mark.hl-yellow { background-color: #e0e0e0 !important; color: #000000 !important; padding: 0 2px; }
+        .notion-block mark.hl-green, mark.hl-green { background-color: #c0c0c0 !important; color: #000000 !important; padding: 0 2px; }
+        .notion-block mark.hl-blue, mark.hl-blue { background-color: #a0a0a0 !important; color: #000000 !important; padding: 0 2px; }
+        .notion-block mark.hl-pink, mark.hl-pink { background-color: #808080 !important; color: #ffffff !important; padding: 0 2px; }
+
         .floating-history-panel { position: fixed; bottom: 20px; right: 20px; background: rgba(26, 26, 26, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); padding: 5px 10px; display: flex; gap: 2px; z-index: 10000; }
         .history-btn { background: none; border: none; color: rgba(255, 255, 255, 0.8); font-size: 0.83rem; font-weight: 600; padding: 7px 12px; cursor: pointer; }
         
         .char-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 2px; display: block; }
-        
-        /* 서술자 및 시스템 메시지 베이스 단락 */
-        .state-narrator { font-weight: 700; color: var(--script-narrator) !important; width: 100%; }
-        .state-narrator.apply-italic { font-style: italic; }
+        .state-narrator { text-align: center; font-weight: 700; font-style: italic; color: var(--script-narrator) !important; width: 100%; }
 
-        /* [요구사항] 시스템 메시지: 정렬 강제 없이 아바타/이름만 숨기고 회색 연출 */
-        .state-system-text {
-            font-size: 0.95rem;
-            color: var(--script-sys) !important;
-            width: 100%;
-        }
+        /* [요구사항 구현] 시스템 메시지 전용 클래스 - 강제 정렬 없이 아바타/이름 완전 숨김 및 자동 회색 변환 */
+        .state-system { font-size: 0.95rem; color: var(--script-sys) !important; width: 100%; }
         
         .character-divider { border-top: 1px solid rgba(255, 255, 255, 0.05); margin: 4px 0 2px 0; width: 100%; }
         .filtered-out { display: none !important; }
@@ -193,27 +202,18 @@
                     </div>
                 </div>
             </div>
-            <div class="grid-config">
-                <div class="input-group">
-                    <span class="input-label">5. 서술자 이텔릭체 효과</span>
-                    <div class="switch-group">
-                        <label class="switch-item"><input type="radio" name="narratorItalicToggle" value="on" checked> 켜기</label>
-                        <label class="switch-item"><input type="radio" name="narratorItalicToggle" value="off"> 끄기</label>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <span class="input-label">안내 및 팁</span>
-                    <span style="color: var(--text-muted); font-size:0.75rem; line-height:1.4;">※ 본문 행을 [더블클릭]하면 검은색 배경 테마가 고정 마킹되어 그대로 저장 및 복사됩니다.</span>
-                </div>
+            <div class="input-group" style="margin-top: 10px;">
+                <span class="input-label">개별 연출 마킹 팁</span>
+                <span style="color: var(--text-muted); font-size:0.78rem; line-height:1.4;">※ 본문 행을 <b>[더블클릭]</b>하면 검은색 배경 테마가 고정 부여되며 그대로 저장 및 코드 복사 파일에 영구 마킹됩니다.</span>
             </div>
             <div class="input-group" style="margin-top: 10px;">
-                <span class="input-label">6. 캐릭터별 개별 색상 지정</span>
+                <span class="input-label">5. 캐릭터별 개별 색상 지정</span>
                 <div id="characterColorPanel" class="color-picker-panel">
                     <span style="color: var(--text-muted); font-size: 0.83rem;">파일을 업로드하면 캐릭터명이 표시됩니다.</span>
                 </div>
             </div>
             <div class="input-group" style="margin-top: 10px;">
-                <span class="input-label">7. 탭 필터링</span>
+                <span class="input-label">6. 탭 필터링</span>
                 <div id="dynamicFilters" class="filter-container"></div>
             </div>
             <div class="input-group" style="margin-top: 14px;">
@@ -229,6 +229,17 @@
         </div>
 
         <div id="dynamicTabsOutput"></div>
+    </div>
+
+    <div id="textStyler">
+        <button data-cmd="bold"><b>B</b></button>
+        <button data-cmd="italic"><i>I</i></button>
+        <button data-cmd="strikeThrough"><s>S</s></button>
+        <div class="styler-divider"></div>
+        <span class="color-chip chip-yellow" style="background:#e0e0e0" data-cmd="hl-yellow"></span>
+        <span class="color-chip chip-green" style="background:#c0c0c0" data-cmd="hl-green"></span>
+        <span class="color-chip chip-blue" style="background:#a0a0a0" data-cmd="hl-blue"></span>
+        <span class="color-chip chip-pink" style="background:#808080" data-cmd="hl-pink"></span>
     </div>
 
     <div class="floating-history-panel">
@@ -249,7 +260,7 @@
         let globalRoomTitle = "세션 로그";
 
         const themeProfiles = {
-            roll20: { bg: "#ffffff", text: "#111111", fallbackName: "#333333", narrator: "#000000", sys: "#777777", border: "#e0e0e0", title: "#111111", titleBg: "#ffffff", titleBorder: "rgba(0,0,0,0.15)" },
+            roll20: { bg: "#ffffff", text: "#111111", fallbackName: "#333333", narrator: "#000000", sys: "#666666", border: "#e0e0e0", title: "#111111", titleBg: "#ffffff", titleBorder: "rgba(0,0,0,0.15)" },
             ccfolia: { bg: "#111111", text: "#ffffff", fallbackName: "#cccccc", narrator: "#e0e0e0", sys: "#888888", border: "#222222", title: "#ffffff", titleBg: "#222222", titleBorder: "rgba(255,255,255,0.15)" }
         };
 
@@ -384,7 +395,7 @@
             });
         }
 
-        // 특정 행 더블클릭 시 검은색 고정 마킹 토글 이벤트 바인딩
+        // 특정 행 더블클릭 토글 이벤트 핸들러 연동
         function attachRowToggleEvents() {
             document.querySelectorAll('.notion-row').forEach(row => {
                 row.ondblclick = function() {
@@ -394,6 +405,35 @@
             });
         }
 
+        /* 드래그 포맷터 인터랙션 설계 */
+        const styler = document.getElementById('textStyler');
+        document.addEventListener('selectionchange', () => {
+            const sel = window.getSelection();
+            if (sel.isCollapsed || !sel.toString().trim()) { styler.style.display = 'none'; return; }
+            let node = sel.anchorNode;
+            while (node && node !== document.body) {
+                if (node.classList && (node.classList.contains('notion-block') || node.classList.contains('inline-msg-body') || node.classList.contains('state-system'))) {
+                    const range = sel.getRangeAt(0); const rect = range.getBoundingClientRect();
+                    styler.style.left = `${rect.left + window.scrollX}px`; styler.style.top = `${rect.top + window.scrollY - 45}px`;
+                    styler.style.display = 'flex'; return;
+                }
+                node = node.parentNode;
+            }
+            styler.style.display = 'none';
+        });
+
+        styler.addEventListener('mousedown', (e) => {
+            e.preventDefault(); const btn = e.target.closest('[data-cmd]'); if (!btn) return;
+            saveHistoryState(); const cmd = btn.getAttribute('data-cmd');
+            if (cmd.startsWith('hl-')) {
+                const colorClass = cmd; const sel = window.getSelection();
+                if (!sel.isCollapsed) {
+                    const range = sel.getRangeAt(0); const mark = document.createElement('mark');
+                    mark.className = colorClass; range.surroundContents(mark);
+                }
+            } else { document.execCommand(cmd, false, null); }
+        });
+
         document.getElementById('btnProcess').addEventListener('click', () => {
             if(rawLogData.length === 0) return alert('파일을 업로드하세요.');
             undoStack = []; redoStack = []; updateHistoryButtons();
@@ -401,9 +441,8 @@
             const narrator = document.getElementById('narratorName').value.trim();
             const charColorMap = getCharacterColorMap();
             const selectedTabs = Array.from(document.querySelectorAll('.tab-chk:checked')).map(c => c.value);
-            const isItalic = document.querySelector('input[name="narratorItalicToggle"]:checked').value === "on";
             
-            // 현재 활성화된 스타일값 재동기화
+            // 본문 타입 스타일 동적 싱크로
             const selectedTheme = document.querySelector('input[name="colorTheme"]:checked').value;
             applyColorTheme(selectedTheme);
 
@@ -436,7 +475,7 @@
                 
                 const targetContainer = tabContainers[currentTargetTab];
                 const isNarr = narrator && log.name === narrator; 
-                const isSys = log.name === "";
+                const isSys = log.name === ""; // 이름이 비어 있는 대사 형태만 시스템으로 정확히 식별
                 const currentType = isSys ? "__SYS__" : (isNarr ? "__NARR__" : log.name);
                 const lastType = tabLastSpeakerType[currentTargetTab];
 
@@ -452,16 +491,14 @@
                 let inner = `<div class="content-cell">`;
                 
                 if(isSys) {
-                    /* [요구사항] 아바타, 이름 완전히 배제하고 좌측 정렬 회색 단락 처리 */
-                    inner += `<div class="notion-block state-system-text" contenteditable="true" spellcheck="false">${cleanMessage}</div>`;
+                    /* [요구사항] 시스템 메시지 분기 처리 : 이름/아바타 완전 숨김 및 회색 연출 */
+                    inner += `<div class="notion-block state-system" contenteditable="true" spellcheck="false">${cleanMessage}</div>`;
                 } else if(isNarr) {
-                    /* [요구사항] 서술자 메시지 연출 제어 */
-                    const italicClass = isItalic ? "apply-italic" : "";
-                    inner += `<div class="notion-block state-narrator ${italicClass}" contenteditable="true" spellcheck="false">${cleanMessage}</div>`;
+                    inner += `<div class="notion-block state-narrator" contenteditable="true" spellcheck="false">${cleanMessage}</div>`;
                 } else {
                     const assignedColor = charColorMap[log.name] || p.fallbackName;
                     if(currentColorTheme === "roll20") {
-                        /* [요구사항] 이름 : 대사 레이아웃 한 줄 형태 완벽 가공 */
+                        /* Roll20 선택자 한 줄 대사 레이아웃 구현 */
                         inner += `<div class="roll20-layout">`;
                         if(!same) {
                             inner += `<span class="char-name-inline" style="color:${assignedColor}">${log.name} :</span>`;
@@ -470,6 +507,7 @@
                         }
                         inner += `<span class="inline-msg-body" contenteditable="true" spellcheck="false" style="outline:none; display:inline-block; flex:1;">${cleanMessage}</span></div>`;
                     } else {
+                        /* 코코포리아 기본 프로필 레이아웃 */
                         inner += same ? `<div class="avatar-placeholder"></div>` : (log.avatar ? `<img src="${log.avatar}" class="avatar-box">` : `<div class="avatar-box"></div>`);
                         inner += `<div style="flex:1;">${!same ? `<span class="char-name" style="color:${assignedColor}">${log.name}</span>`:''}<div class="notion-block" contenteditable="true" spellcheck="false">${cleanMessage}</div></div>`;
                     }
@@ -487,7 +525,6 @@
         function buildFinal() {
             const chosenFont = currentFontType === "serif" ? `'Hina Mincho', 'Noto Serif KR', serif` : `'Noto Sans KR', sans-serif`;
             const p = themeProfiles[currentColorTheme]; const charColorMap = getCharacterColorMap();
-            const isItalic = document.querySelector('input[name="narratorItalicToggle"]:checked').value === "on";
             
             const bodyBg = currentColorTheme === "roll20" ? "#ffffff" : "#111111";
             const bodyText = currentColorTheme === "roll20" ? "#111111" : "rgba(255,255,255,0.85)";
@@ -501,9 +538,10 @@
                 h1 { font-family:${chosenFont}; font-size:1.4rem; text-align:center; color:${p.title} !important; background-color:${p.titleBg} !important; border:1px solid ${p.titleBorder} !important; padding:14px; margin-bottom:14px; font-weight:700; cursor:pointer; user-select:none; }
                 .script-box { display:flex; flex-direction:column; gap:1px; background:${p.bg} !important; padding:20px; border:1px solid ${p.border}; margin-bottom:28px; width:100%; }
                 .script-box.collapsed { display:none !important; }
+                
                 .row { display:flex; align-items:flex-start; gap:12px; padding:5px 6px; width:100%; transition: background-color 0.15s; }
                 
-                /* [요구사항] 저장 파일 전용 검정색 배경/흰색 글씨 클래스 선택자 */
+                /* [요구사항] 외부 저장용 특정 더블클릭 검정색 테마 클래스 인젝션 */
                 .row.save-focused-black {
                     background-color: #000000 !important;
                     color: #ffffff !important;
@@ -518,11 +556,17 @@
                 .avatar { width:28px; height:28px; object-fit:cover; flex-shrink:0; background:#444; }
                 .msg { font-family:${chosenFont}; font-size:0.95rem; line-height:1.55; white-space:pre-wrap; flex:1; color:${p.text} !important; word-break:break-word; }
                 .name { font-size:0.85rem; font-weight:700; display:block; margin-bottom:2px; }
-                .narrator { font-weight:700; ${isItalic ? 'font-style:italic;' : ''} color:${p.narrator} !important; width:100%; }
+                .narrator { text-align:center; font-weight:700; font-style:italic; color:${p.narrator} !important; width:100%; }
                 .system-text-node { color:${p.sys} !important; font-size:0.95rem; width:100%; white-space:pre-wrap; }
                 .divider { border-top:1px solid rgba(128,128,128,0.15); margin:6px 0; }
                 .r20-wrap { display:flex; align-items:flex-start; gap:5px; flex-wrap:wrap; font-family:${chosenFont}; font-size:0.95rem; line-height:1.55; color:${p.text} !important; width:100%; }
                 .r20-name { font-weight:700; white-space:nowrap; margin-right:4px; }
+                
+                /* 스타일링 태그 보존 연출자 */
+                mark.hl-yellow { background-color:#e0e0e0 !important; color:#000 !important; padding:1px 3px; }
+                mark.hl-green { background-color:#c0c0c0 !important; color:#000 !important; padding:1px 3px; }
+                mark.hl-blue { background-color:#a0a0a0 !important; color:#000 !important; padding:1px 3px; }
+                mark.hl-pink { background-color:#808080 !important; color:#fff !important; padding:1px 3px; }
                 b { font-weight:bold; } i { font-style:italic; } s { text-decoration:line-through; }
             </style></head><body><div class="page-wrap">`;
 
@@ -535,7 +579,7 @@
                     const isFocusedBlack = el.classList.contains('is-focused-black');
                     const rowClass = isFocusedBlack ? "row save-focused-black" : "row";
                     
-                    const block = el.querySelector('.notion-block') || el.querySelector('.inline-msg-body') || el.querySelector('.state-system-text'); 
+                    const block = el.querySelector('.notion-block') || el.querySelector('.inline-msg-body') || el.querySelector('.state-system'); 
                     if(!block) return;
                     
                     let cleanHTML = block.innerHTML;
@@ -587,7 +631,7 @@
         document.getElementById('logSearchInput').addEventListener('input', function(e) {
             const k = e.target.value.toLowerCase().trim();
             document.querySelectorAll('.notion-row').forEach(r => {
-                const block = r.querySelector('.notion-block') || r.querySelector('.inline-msg-body') || r.querySelector('.state-system-text'); if(!block) return;
+                const block = r.querySelector('.notion-block') || r.querySelector('.inline-msg-body') || r.querySelector('.state-system'); if(!block) return;
                 if(block.innerText.toLowerCase().includes(k) || k === '') r.classList.remove('filtered-out');
                 else r.classList.add('filtered-out');
             });
