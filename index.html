@@ -30,11 +30,11 @@
             --current-font: var(--font-sans);
 
             --script-bg: #111111;
-            --script-text: #e3e3e3;
-            --script-narrator: #e3e3e3;
+            --script-text: #ffffff;
+            --script-narrator: #e0e0e0;
             --script-sys: #888888;
             --script-border: #222222;
-            --title-color: #e3e3e3;
+            --title-color: #ffffff;
             --title-bg: #222222;
             --title-border: rgba(255, 255, 255, 0.15);
 
@@ -200,7 +200,6 @@
         .btn-submit:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
         .btn-util { flex: 1; min-width: 80px; }
 
-        /* ── 맞춤법 리포트 카드 (흑백 스타일에 연동) ── */
         .spell-report-card {
             background: var(--bg-card); border: 1px solid rgba(255,255,255,0.2);
             border-radius: var(--radius-lg); padding: 18px 20px; display: none;
@@ -264,7 +263,6 @@
         }
         .spell-fix-trigger:hover { background: rgba(255,255,255,0.25); }
 
-        /* 로그 편집 에디터 내 본문 박스 */
         .script-container {
             display: flex; flex-direction: column; gap: 1px;
             background-color: var(--script-bg); padding: 16px; border-radius: var(--radius-md);
@@ -276,11 +274,23 @@
         .notion-row { 
             display: flex; align-items: center; justify-content: space-between; gap: 12px; 
             padding: 5px 8px; border-radius: var(--radius-sm); position: relative;
-            transition: background-color 0.15s ease; width: 100%;
+            transition: background-color 0.15s ease, color 0.15s ease; width: 100%;
         }
         .notion-row.filtered-out { display: none !important; }
         .notion-row:hover { background: rgba(255, 255, 255, 0.04); }
         .notion-row.row-flash { background-color: rgba(255,255,255,0.15) !important; }
+
+        /* [요구사항] 에디터 단에서 포커싱 시 검정색 배경 및 글자색 자동 반전 피드백 */
+        .notion-row:focus-within {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+        }
+        .notion-row:focus-within .notion-block {
+            color: #ffffff !important;
+        }
+        .notion-row:focus-within .state-system-text {
+            color: #aaaaaa !important;
+        }
 
         .content-cell { display: flex; align-items: flex-start; gap: 10px; flex: 1; width: 100%; overflow: hidden; }
         .avatar-box { width: 28px; height: 28px; border-radius: 0px; object-fit: cover; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); background: #333; }
@@ -290,6 +300,19 @@
             flex: 1; padding: 1px 4px; border-radius: 0px; font-size: 0.95rem; line-height: 1.55; 
             word-break: break-word; outline: none; color: var(--script-text) !important; white-space: pre-wrap;
             font-family: var(--current-font); width: 100%;
+        }
+
+        /* Roll20 스타일 한 줄 모드 레이아웃 구조 정의 */
+        .roll20-layout {
+            display: flex;
+            align-items: flex-start;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .roll20-layout .char-name-inline {
+            font-weight: 700;
+            font-size: 0.95rem;
+            white-space: nowrap;
         }
 
         .notion-block button.del, .notion-block .row-control, .notion-block .del { display: none !important; }
@@ -308,10 +331,10 @@
         .notion-block i, .msg i { font-style: italic; }
         .notion-block s, .msg s { text-decoration: line-through; }
         
-        .notion-block mark.hl-yellow, mark.hl-yellow { background-color: #e0e0e0 !important; color: #232323 !important; padding: 0 2px; border-radius: 0px; }
-        .notion-block mark.hl-green, mark.hl-green { background-color: #c0c0c0 !important; color: #232323 !important; padding: 0 2px; border-radius: 0px; }
-        .notion-block mark.hl-blue, mark.hl-blue { background-color: #a0a0a0 !important; color: #232323 !important; padding: 0 2px; border-radius: 0px; }
-        .notion-block mark.hl-pink, mark.hl-pink { background-color: #808080 !important; color: #e3e3e3 !important; padding: 0 2px; border-radius: 0px; }
+        .notion-block mark.hl-yellow, mark.hl-yellow { background-color: #e0e0e0 !important; color: #000000 !important; padding: 0 2px; border-radius: 0px; }
+        .notion-block mark.hl-green, mark.hl-green { background-color: #c0c0c0 !important; color: #000000 !important; padding: 0 2px; border-radius: 0px; }
+        .notion-block mark.hl-blue, mark.hl-blue { background-color: #a0a0a0 !important; color: #000000 !important; padding: 0 2px; border-radius: 0px; }
+        .notion-block mark.hl-pink, mark.hl-pink { background-color: #808080 !important; color: #ffffff !important; padding: 0 2px; border-radius: 0px; }
 
         #textStyler {
             position: absolute; display: none;
@@ -337,18 +360,36 @@
         .btn-scroll-top { border-left: 1px solid rgba(255,255,255,0.15); margin-left: 2px; padding-left: 14px; }
         
         .char-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 2px; display: block; font-family: var(--font-ui); }
-        .state-narrator { text-align: center; font-weight: 700; font-style: italic; color: var(--script-narrator) !important; width: 100%; margin: 2px 0; padding: 2px 10px; font-size: 0.95rem; }
-        .state-system { font-family: var(--font-ui); font-size: 0.85rem; color: var(--script-sys) !important; }
+        
+        /* 서술자 스타일 및 이텔릭 온오프 토글 대응을 위한 베이스 구조 */
+        .state-narrator { text-align: center; font-weight: 700; color: var(--script-narrator) !important; width: 100%; margin: 2px 0; padding: 2px 10px; font-size: 0.95rem; }
+        .state-narrator.apply-italic { font-style: italic; }
+
+        /* [요구사항] 시스템 메시지 형식: 아바타/이름 완전 은닉 및 중앙 정렬 회색 단락 처리 */
+        .state-system-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+        .state-system-text {
+            font-family: var(--font-ui);
+            font-size: 0.85rem;
+            color: var(--script-sys) !important;
+            text-align: center !important;
+            width: auto;
+            margin: 2px auto;
+            background: transparent !important;
+        }
+        
         .character-divider { border-top: 1px solid rgba(255, 255, 255, 0.05); margin: 4px 0 2px 0; width: 100%; }
 
-        /* 빈 상태 힌트 */
         .empty-hint {
             text-align: center; padding: 40px 20px; color: var(--text-muted);
             font-size: 0.88rem; line-height: 1.7;
         }
         .empty-hint .hint-icon { font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.4; }
 
-        /* 스크롤바 */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 0px; }
@@ -395,12 +436,24 @@
                 </div>
             </div>
             <div class="grid-config">
-                <div class="input-group" style="grid-column: span 2;">
+                <div class="input-group">
                     <span class="input-label">5. 맞춤법 교정</span>
                     <div class="switch-group">
                         <label class="switch-item"><input type="radio" name="spellCheckToggle" value="off" checked> 끄기</label>
                         <label class="switch-item"><input type="radio" name="spellCheckToggle" value="on"> 켜기</label>
                     </div>
+                </div>
+                <div class="input-group">
+                    <span class="input-label">5-2. 서술자 이텔릭체 효과</span>
+                    <div class="switch-group">
+                        <label class="switch-item"><input type="radio" name="narratorItalicToggle" value="on" checked> 켜기</label>
+                        <label class="switch-item"><input type="radio" name="narratorItalicToggle" value="off"> 끄기</label>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-config">
+                <div class="input-group" style="grid-column: span 2;">
+                    <span class="input-label">※ 안내: 편집 에디터 내 본문 요소를 조작(포커싱) 시 배경색이 즉시 검정색으로 자동 강조 처리됩니다.</span>
                 </div>
             </div>
             <div class="input-group" style="margin-top: 10px;">
@@ -471,21 +524,17 @@
         let isHistoryAction = false; 
         let globalRoomTitle = "세션 로그";
 
-        /* 교정 신뢰도 및 패턴 수 대폭 향상형 spellRules */
         const spellRules = [
-            // ── 됐다/됐어 계열 완전 정복 ──
             { wrong: /됬됐다/g, right: "됐다", cat: "맞춤법" },
             { wrong: /됬어/g, right: "됐어", cat: "맞춤법" },
             { wrong: /됬/g, right: "됐", cat: "맞춤법" },
-            { wrong: /되었다/g, right: "됐다", cat: "맞춤법" },
+            { wrong: /되었습니다/g, right: "됐다", cat: "맞춤법" },
             { wrong: /되었어/g, right: "됐어", cat: "맞춤법" },
             { wrong: /되었고/g, right: "됐고", cat: "맞춤법" },
             { wrong: /되었니/g, right: "됐니", cat: "맞춤법" },
             { wrong: /되었던/g, right: "됐던", cat: "맞춤법" },
             { wrong: /됬음/g, right: "됐음", cat: "맞춤법" },
             { wrong: /됬다/g, right: "됐다", cat: "맞춤법" },
-
-            // ── 안/않 구별 정밀화 ──
             { wrong: /않하고/g, right: "안 하고", cat: "맞춤법" },
             { wrong: /않돼/g, right: "안 돼", cat: "맞춤법" },
             { wrong: /않된다/g, right: "안 된다", cat: "맞춤법" },
@@ -496,8 +545,6 @@
             { wrong: /않먹/g, right: "안 먹", cat: "맞춤법" },
             { wrong: /않오/g, right: "안 오", cat: "맞춤법" },
             { wrong: /않좋/g, right: "안 좋", cat: "맞춤법" },
-
-            // ── 부정 부사 '안' 띄어쓰기 철저 검수 ──
             { wrong: /안되나요/g, right: "안 되나요", cat: "띄어쓰기" },
             { wrong: /안되죠/g, right: "안 되죠", cat: "띄어쓰기" },
             { wrong: /안되는/g, right: "안 되는", cat: "띄어쓰기" },
@@ -509,8 +556,6 @@
             { wrong: /안가/g, right: "안 가", cat: "띄어쓰기" },
             { wrong: /안좋은/g, right: "안 좋은", cat: "띄어쓰기" },
             { wrong: /안좋아/g, right: "안 좋아", cat: "띄어쓰기" },
-
-            // ── 다빈도 맞춤법 파괴 교정 ──
             { wrong: /어의없/g, right: "어처구니없", cat: "맞춤법" },
             { wrong: /바램/g, right: "바람", cat: "맞춤법" },
             { wrong: /그라믄/g, right: "그러면", cat: "맞춤법" },
@@ -531,7 +576,7 @@
             { wrong: /몆일/g, right: "며칠", cat: "맞춤법" },
             { wrong: /왠지모르/g, right: "왠지 모르", cat: "맞춤법" },
             { wrong: /웬지/g, right: "왠지", cat: "맞춤법" },
-            { wrong: /웬만하면/g, right: "웬만하면", cat: "웬만하면" },
+            { wrong: /웬만하면/g, right: "웬만하면", cat: "맞춤법" },
             { wrong: /어떻하/g, right: "어떡하", cat: "맞춤법" },
             { wrong: /틀리다/g, right: "다르다", cat: "맞춤법" }, 
             { wrong: /재밋/g, right: "재밌", cat: "맞춤법" },
@@ -539,20 +584,14 @@
             { wrong: /더낳은/g, right: "더 나은", cat: "맞춤법" },
             { wrong: /낳아/g, right: "나아", cat: "맞춤법" },
             { wrong: /설레임/g, right: "설렘", cat: "맞춤법" },
-            { wrong: /연예인/g, right: "연예인", cat: "" },
             { wrong: /바래어/g, right: "바라어", cat: "맞춤법" },
             { wrong: /희안한/g, right: "희한한", cat: "맞춤법" },
             { wrong: /희안하/g, right: "희한하", cat: "맞춤법" },
-            { wrong: /얘기체/g, right: "체", cat: "" },
-
-            // ── 의존명사 및 보조용언 띄어쓰기 규격 최적화 ──
             { wrong: /할거야/g, right: "할 거야", cat: "띄어쓰기" },
             { wrong: /할거에요/g, right: "할 거예요", cat: "띄어쓰기" },
-            { wrong: /할거야/g, right: "할 거야", cat: "띄어쓰기" },
             { wrong: /할수/g, right: "할 수", cat: "띄어쓰기" },
             { wrong: /할수있다/g, right: "할 수 있다", cat: "띄어쓰기" },
             { wrong: /할수없는/g, right: "할 수 없는", cat: "띄어쓰기" },
-            { wrong: /했는 대/g, right: "했는데", cat: "띄어쓰기" },
             { wrong: /맞는것/g, right: "맞는 것", cat: "띄어쓰기" },
             { wrong: /하는것/g, right: "하는 것", cat: "띄어쓰기" },
             { wrong: /이런것/g, right: "이런 것", cat: "띄어쓰기" },
@@ -569,39 +608,21 @@
             { wrong: /해보자/g, right: "해 보자", cat: "띄어쓰기" },
             { wrong: /해보면/g, right: "해 보면", cat: "띄어쓰기" },
             { wrong: /해봐/g, right: "해 봐", cat: "띄어쓰기" },
-            { wrong: /가볼까/g, right: "가 볼까", cat: "띄어쓰기" },
-            { wrong: /가봐야/g, right: "가 봐야", cat: "띄어쓰기" },
             { wrong: /내꺼/g, right: "내 것", cat: "맞춤법" },
-            { wrong: /니꺼/g, right: "네 것", cat: "맞춤법" },
-            { wrong: /네꺼/g, right: "네 것", cat: "맞춤법" },
             { wrong: /먹을때/g, right: "먹을 때", cat: "띄어쓰기" },
-            { wrong: /갈때/g, right: "갈 때", cat: "띄어쓰기" },
             { wrong: /할때/g, right: "할 때", cat: "띄어쓰기" },
             { wrong: /했을때/g, right: "했을 때", cat: "띄어쓰기" },
-
-            // ── 세션 다빈도 TRPG 단어 왜곡 교정 ──
             { wrong: /던젼/g, right: "던전", cat: "맞춤법" },
             { wrong: /케릭터/g, right: "캐릭터", cat: "맞춤법" },
-            { wrong: /보스몹/g, right: "보스 몹", cat: "띄어쓰기" },
-            { wrong: /아이템창/g, right: "아이템 창", cat: "띄어쓰기" },
-            { wrong: /다이스롤/g, right: "다이스 롤", cat: "띄어쓰기" },
-            { wrong: /크리티컬히트/g, right: "크리티컬 히트", cat: "띄어쓰기" },
-
-            // ── 조사 및 다빈도 어미 결합 교정 ──
-            { wrong: /-(이)에요$/g, right: "예요", cat: "맞춤법" },
-            { wrong: /이예요/g, right: "이에요", cat: "맞춤법" },
             { wrong: /할려구/g, right: "하려고", cat: "맞춤법" },
             { wrong: /할려고/g, right: "하려고", cat: "맞춤법" },
-            { wrong: /먹을려고/g, right: "먹으려고", cat: "맞춤법" },
-            { wrong: /가다시피/g, right: "가다시피", cat: "" },
             { wrong: /하는 지/g, right: "하는지", cat: "띄어쓰기" },
             { wrong: /했는 지/g, right: "했는지", cat: "띄어쓰기" }
-        ].filter(r => r.cat !== "");
+        ];
 
-        /* 흑백 모노크롬 계열로 내부 프로필 폴백 컬러 구조 조정 (옅은 색감으로 반영) */
         const themeProfiles = {
-            roll20: { bg: "#e9eced", text: "#232323", fallbackName: "#454545", narrator: "#232323", sys: "#666666", border: "#dcdfe0", title: "#232323", titleBg: "#e9eced", titleBorder: "rgba(0,0,0,0.1)" },
-            ccfolia: { bg: "#111111", text: "#e3e3e3", fallbackName: "#cccccc", narrator: "#e3e3e3", sys: "#888888", border: "#222222", title: "#e3e3e3", titleBg: "#222222", titleBorder: "rgba(255,255,255,0.15)" }
+            roll20: { bg: "#ffffff", text: "#111111", fallbackName: "#333333", narrator: "#000000", sys: "#666666", border: "#e0e0e0", title: "#111111", titleBg: "#ffffff", titleBorder: "rgba(0,0,0,0.15)" },
+            ccfolia: { bg: "#111111", text: "#ffffff", fallbackName: "#cccccc", narrator: "#e0e0e0", sys: "#888888", border: "#222222", title: "#ffffff", titleBg: "#222222", titleBorder: "rgba(255,255,255,0.15)" }
         };
 
         function applyColorTheme(themeName) {
@@ -744,6 +765,7 @@
             const narrator = document.getElementById('narratorName').value.trim();
             const charColorMap = getCharacterColorMap();
             const selectedTabs = Array.from(document.querySelectorAll('.tab-chk:checked')).map(c => c.value);
+            const isItalic = document.querySelector('input[name="narratorItalicToggle"]:checked').value === "on";
             
             selectedTabs.sort((a, b) => {
                 if (a.toLowerCase() === 'main') return -1;
@@ -784,16 +806,35 @@
                 const same = (lastType === currentType && !isNarr && !isSys); tabLastSpeakerType[currentTargetTab] = currentType;
 
                 const row = document.createElement('div'); row.className = "notion-row"; row.dataset.tab = currentTargetTab; row.dataset.speaker = log.name;
+                row.dataset.sys = isSys ? "true" : "false"; row.dataset.narr = isNarr ? "true" : "false";
                 let cleanMessage = log.message.replace(/<button[^>]*class="[^"]*del[^"]*"[^>]*>.*?<\/button>/gi, '').replace(/<button[^>]*>del<\/button>/gi, '').replace(/class="[^"]*del[^"]*"/gi, '');
 
                 let inner = `<div class="content-cell">`;
-                if(!isNarr && !isSys) {
-                    const assignedColor = charColorMap[log.name] || p.fallbackName;
-                    inner += same ? `<div class="avatar-placeholder"></div>` : (log.avatar ? `<img src="${log.avatar}" class="avatar-box">` : `<div class="avatar-box"></div>`);
-                    inner += `<div style="flex:1;">${!same ? `<span class="char-name" style="color:${assignedColor}">${log.name}</span>`:''}<div class="notion-block" contenteditable="true" spellcheck="false">${cleanMessage}</div></div>`;
+                
+                if(isSys) {
+                    /* [요구사항] 시스템 메시지 - 아바타/이름 배제하고 텍스트 레이아웃 중앙 정렬화 */
+                    inner += `<div class="state-system-container"><div class="notion-block state-system-text" contenteditable="true" spellcheck="false">${cleanMessage}</div></div>`;
+                } else if(isNarr) {
+                    /* [요구사항] 서술자 메시지 - 옵션에 따른 이텔릭 토글 연동 클래스 부여 */
+                    const italicClass = isItalic ? "apply-italic" : "";
+                    inner += `<div class="notion-block state-narrator ${italicClass}" contenteditable="true" spellcheck="false">${cleanMessage}</div>`;
                 } else {
-                    inner += `<div class="notion-block ${isNarr?'state-narrator':'state-system'}" contenteditable="true" spellcheck="false">${isNarr ? `<b><i>${cleanMessage}</i></b>` : cleanMessage}</div>`;
+                    const assignedColor = charColorMap[log.name] || p.fallbackName;
+                    if(currentColorTheme === "roll20") {
+                        /* [요구사항] Roll20 스타일 선택 시 '이름: 대사' 한 줄 형식으로 표기 가공 */
+                        inner += `<div class="notion-block roll20-layout" style="flex:1;">`;
+                        if(!same) {
+                            inner += `<span class="char-name-inline" style="color:${assignedColor}">${log.name} :</span>`;
+                        } else {
+                            inner += `<span class="char-name-inline" style="opacity:0; pointer-events:none;">${log.name} :</span>`;
+                        }
+                        inner += `<span class="inline-msg-body" contenteditable="true" spellcheck="false" style="outline:none; display:inline-block; flex:1;">${cleanMessage}</span></div>`;
+                    } else {
+                        inner += same ? `<div class="avatar-placeholder"></div>` : (log.avatar ? `<img src="${log.avatar}" class="avatar-box">` : `<div class="avatar-box"></div>`);
+                        inner += `<div style="flex:1;">${!same ? `<span class="char-name" style="color:${assignedColor}">${log.name}</span>`:''}<div class="notion-block" contenteditable="true" spellcheck="false">${cleanMessage}</div></div>`;
+                    }
                 }
+                
                 inner += `</div><div class="control-cell"><button class="row-control" onclick="saveHistoryState(); this.closest('.notion-row').remove();">del</button></div>`;
                 
                 row.innerHTML = inner; targetContainer.appendChild(row);
@@ -842,17 +883,7 @@
             
             if (detected.length > 0) {
                 reportCard.style.display = "block";
-                
-                const cats = {};
-                detected.forEach(d => { cats[d.rule.cat] = (cats[d.rule.cat] || 0) + 1; });
-                Object.entries(cats).forEach(([cat, cnt]) => {
-                    const chip = document.createElement('div'); chip.className = "spell-summary-chip";
-                    chip.innerHTML = `<span>${cat}</span><span class="chip-count">${cnt}건</span>`;
-                    summaryBar.appendChild(chip);
-                });
-                const totalChip = document.createElement('div'); totalChip.className = "spell-summary-chip";
-                totalChip.innerHTML = `<span>전체</span><span class="chip-count">${detected.length}건</span>`;
-                summaryBar.prepend(totalChip);
+                detected.forEach(d => { summaryBar.innerHTML += `<div class="spell-summary-chip"><span>${d.rule.cat}</span></div>`; });
                 
                 detected.forEach((issue) => {
                     const item = document.createElement('div'); item.className = "spell-report-item";
@@ -874,11 +905,14 @@
                         setTimeout(() => issue.row?.classList.remove('row-flash'), 1000);
                     });
                     item.querySelector('.spell-fix-trigger').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        saveHistoryState();
+                        e.stopPropagation(); saveHistoryState();
                         issue.rule.wrong.lastIndex = 0;
-                        issue.el.innerHTML = issue.el.innerHTML.replace(issue.rule.wrong, issue.rule.right);
-                        issue.rule.wrong.lastIndex = 0;
+                        if(issue.el.querySelector('.inline-msg-body')) {
+                            let targetBody = issue.el.querySelector('.inline-msg-body');
+                            targetBody.innerHTML = targetBody.innerHTML.replace(issue.rule.wrong, issue.rule.right);
+                        } else {
+                            issue.el.innerHTML = issue.el.innerHTML.replace(issue.rule.wrong, issue.rule.right);
+                        }
                         item.classList.add('is-fixed');
                     });
                     reportList.appendChild(item);
@@ -890,8 +924,7 @@
             const buttons = document.querySelectorAll('.spell-fix-trigger:not([disabled])');
             const active = Array.from(buttons).filter(b => !b.closest('.is-fixed'));
             if (active.length === 0) return;
-            saveHistoryState();
-            active.forEach(btn => btn.click());
+            saveHistoryState(); active.forEach(btn => btn.click());
         });
 
         document.getElementById('btnSpellDismiss').addEventListener('click', () => {
@@ -901,15 +934,10 @@
         function buildFinal() {
             const chosenFont = currentFontType === "serif" ? `'Hina Mincho', 'Noto Serif KR', serif` : `'Noto Sans KR', sans-serif`;
             const p = themeProfiles[currentColorTheme]; const charColorMap = getCharacterColorMap();
+            const isItalic = document.querySelector('input[name="narratorItalicToggle"]:checked').value === "on";
             
-            const bodyBg = currentColorTheme === "roll20" ? "#e9eced" : "#111111";
-            const bodyText = currentColorTheme === "roll20" ? "#232323" : "#e3e3e3";
-
-            // 테마별 서술 박스 형태 제어 속성 정의
-            const isRoll20 = (currentColorTheme === "roll20");
-            const narrBg = isRoll20 ? "transparent" : p.bg;
-            const narrBorder = isRoll20 ? "none" : `1px solid ${p.border}`;
-            const narrPadding = isRoll20 ? "5px 6px" : "14px 20px";
+            const bodyBg = currentColorTheme === "roll20" ? "#ffffff" : "#111111";
+            const bodyText = currentColorTheme === "roll20" ? "#111111" : "rgba(255,255,255,0.85)";
 
             let out = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>세션 로그 백업</title><style>
                 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&family=Hina+Mincho&display=swap');
@@ -917,26 +945,24 @@
                 html, body { background-color: ${bodyBg} !important; }
                 body { color: ${bodyText} !important; font-family:'Noto Sans KR', sans-serif; padding: 50px 24px; display: flex; flex-direction: column; align-items: center; }
                 .page-wrap { width: 100%; max-width: 850px; }
-                
-                h1 { font-family:${chosenFont}; font-size:1.4rem; text-align:center; color:${p.title} !important; background-color:${p.titleBg} !important; border:1px solid ${p.titleBorder} !important; border-radius:0; padding:14px; margin-bottom:14px; font-weight:700; cursor:pointer; user-select:none; }
+                h1 { font-family:${chosenFont}; font-size:1.4rem; text-align:center; color:${p.title} !important; background-color:${p.titleBg} !important; border:1px solid ${p.titleBorder} !important; padding:14px; margin-bottom:14px; font-weight:700; cursor:pointer; user-select:none; }
                 h1::after { content:" ▾"; font-size:0.8rem; opacity:0.5; }
-                
-                .script-box { display:flex; flex-direction:column; gap:1px; background:${p.bg} !important; padding:20px; border-radius:0; border:1px solid ${p.border}; margin-bottom:28px; width:100%; }
+                .script-box { display:flex; flex-direction:column; gap:1px; background:${p.bg} !important; padding:20px; border:1px solid ${p.border}; margin-bottom:28px; width:100%; }
                 .script-box.collapsed { display:none !important; }
                 .row { display:flex; align-items:flex-start; gap:12px; padding:5px 6px; width:100%; }
-                .avatar { width:28px; height:28px; border-radius:0; object-fit:cover; flex-shrink:0; background:#444; }
-                .msg { font-family:${chosenFont}; font-size:0.95rem; line-height:1.55; white-space:pre-wrap; flex:1; color:${p.text} !important; word-break:break-word; background:transparent !important; }
-                .name { font-size:0.85rem; font-weight:700; display:block; margin-bottom:2px; background:transparent !important; }
-                
-                /* 서술자 스타일 - 가운데정렬, 볼드, 이텔릭, 배경 제어 반영 */
-                .narrator { text-align:center; font-weight:700; font-style:italic; padding:${narrPadding}; color:${p.narrator} !important; width:100%; background:${narrBg} !important; border:${narrBorder}; }
-                .system { color:${p.sys} !important; font-size:0.85rem; background:transparent !important; }
+                .avatar { width:28px; height:28px; object-fit:cover; flex-shrink:0; background:#444; }
+                .msg { font-family:${chosenFont}; font-size:0.95rem; line-height:1.55; white-space:pre-wrap; flex:1; color:${p.text} !important; word-break:break-word; }
+                .name { font-size:0.85rem; font-weight:700; display:block; margin-bottom:2px; }
+                .narrator { text-align:center; font-weight:700; ${isItalic ? 'font-style:italic;' : ''} padding:3px 10px; color:${p.narrator} !important; width:100%; }
+                .system-center-box { width:100%; display:flex; justify-content:center; text-align:center; }
+                .system-text-node { color:${p.sys} !important; font-size:0.85rem; text-align:center !important; margin:2px auto; }
                 .divider { border-top:1px solid rgba(128,128,128,0.15); margin:6px 0; }
-                
-                mark.hl-yellow { background-color:#e0e0e0 !important; color:#232323 !important; padding:1px 3px; }
-                mark.hl-green { background-color:#c0c0c0 !important; color:#232323 !important; padding:1px 3px; }
-                mark.hl-blue { background-color:#a0a0a0 !important; color:#232323 !important; padding:1px 3px; }
-                mark.hl-pink { background-color:#808080 !important; color:#e3e3e3 !important; padding:1px 3px; }
+                .r20-wrap { display:flex; align-items:flex-start; gap:5px; flex-wrap:wrap; font-family:${chosenFont}; font-size:0.95rem; line-height:1.55; color:${p.text} !important; }
+                .r20-name { font-weight:700; white-space:nowrap; }
+                mark.hl-yellow { background-color:#e0e0e0 !important; color:#000 !important; padding:1px 3px; }
+                mark.hl-green { background-color:#c0c0c0 !important; color:#000 !important; padding:1px 3px; }
+                mark.hl-blue { background-color:#a0a0a0 !important; color:#000 !important; padding:1px 3px; }
+                mark.hl-pink { background-color:#808080 !important; color:#fff !important; padding:1px 3px; }
                 b { font-weight:bold; } i { font-style:italic; } s { text-decoration:line-through; }
             </style></head><body><div class="page-wrap">`;
 
@@ -944,27 +970,38 @@
                 let res = ""; let last = "";
                 nodes.forEach(el => {
                     if(el.classList.contains('character-divider')) { res+='<div class="divider"></div>'; return; }
+                    
+                    const isN = el.dataset.narr === "true", isS = el.dataset.sys === "true";
                     const block = el.querySelector('.notion-block'); if(!block) return;
-                    let cleanHTML = block.innerHTML.replace(/<button[^>]*>.*?<\/button>/gi, '').replace(/del/gi, ''); 
-
-                    const isN = block.classList.contains('state-narrator'), isS = block.classList.contains('state-system');
-                    const spk = el.dataset.speaker || ""; const same = (last === spk && !isN && !isS); last = (isN?"_N":isS?"_S":spk);
-                    res += '<div class="row">';
-                    if(!isN && !isS) {
-                        const img = el.querySelector('.avatar-box')?.src; const finalColor = charColorMap[spk] || p.fallbackName;
-                        res += !same ? (img ? `<img src="${img}" class="avatar">` : `<div class="avatar"></div>`) : `<div style="width:28px;flex-shrink:0"></div>`;
-                        res += `<div>${!same?`<span class="name" style="color:${finalColor}">${spk}</span>`:''}<div class="msg">${cleanHTML}</div></div>`;
+                    
+                    let cleanHTML = "";
+                    if(el.querySelector('.inline-msg-body')) {
+                        cleanHTML = el.querySelector('.inline-msg-body').innerHTML.replace(/<button[^>]*>.*?<\/button>/gi, '').replace(/del/gi, '');
                     } else {
-                        // 저장 시 서술자 텍스트 볼드+이텔릭 유실 방지 보정
-                        let styledContent = cleanHTML;
-                        if(isN) {
-                            if(!styledContent.includes('<i>') && !styledContent.includes('<em>')) {
-                                styledContent = `<b><i>${styledContent}</i></b>`;
-                            }
-                        }
-                        res += `<div class="msg ${isN?'narrator':'system'}">${styledContent}</div>`;
+                        cleanHTML = block.innerHTML.replace(/<button[^>]*>.*?<\/button>/gi, '').replace(/del/gi, '');
                     }
-                    res += '</div>';
+
+                    const spk = el.dataset.speaker || ""; const same = (last === spk && !isN && !isS); last = (isN?"_N":isS?"_S":spk);
+                    
+                    if(isS) {
+                        /* 최종 추출 시 시스템 스크립트 중앙 정렬 처리 */
+                        res += `<div class="row"><div class="system-center-box"><div class="system-text-node">${cleanHTML}</div></div></div>`;
+                    } else if(isN) {
+                        res += `<div class="row"><div class="msg narrator">${cleanHTML}</div></div>`;
+                    } else {
+                        const finalColor = charColorMap[spk] || p.fallbackName;
+                        if(currentColorTheme === "roll20") {
+                            res += `<div class="row"><div class="r20-wrap">`;
+                            if(!same) res += `<span class="r20-name" style="color:${finalColor}">${spk} :</span>`;
+                            else res += `<span class="r20-name" style="opacity:0; pointer-events:none;">${spk} :</span>`;
+                            res += `<span class="r20-body">${cleanHTML}</span></div></div>`;
+                        } else {
+                            res += '<div class="row">';
+                            const img = el.querySelector('.avatar-box')?.src;
+                            res += !same ? (img ? `<img src="${img}" class="avatar">` : `<div class="avatar"></div>`) : `<div style="width:28px;flex-shrink:0"></div>`;
+                            res += `<div>${!same?`<span class="name" style="color:${finalColor}">${spk}</span>`:''}<div class="msg">${cleanHTML}</div></div></div>`;
+                        }
+                    }
                 }); return res;
             };
 
@@ -979,8 +1016,7 @@
 
         document.getElementById('btnCopy').addEventListener('click', () => {
             navigator.clipboard.writeText(buildFinal()).then(() => {
-                const btn = document.getElementById('btnCopy');
-                const orig = btn.textContent; btn.textContent = "복사 완료";
+                const btn = document.getElementById('btnCopy'); const orig = btn.textContent; btn.textContent = "복사 완료";
                 btn.style.color = "var(--success)"; btn.style.borderColor = "var(--border-active)";
                 setTimeout(() => { btn.textContent = orig; btn.style.color = ""; btn.style.borderColor = ""; }, 2000);
             });
@@ -995,7 +1031,7 @@
         document.getElementById('logSearchInput').addEventListener('input', function(e) {
             const k = e.target.value.toLowerCase().trim();
             document.querySelectorAll('.notion-row').forEach(r => {
-                const block = r.querySelector('.notion-block'); if(!block) return;
+                const block = r.querySelector('.notion-block') || r.querySelector('.inline-msg-body'); if(!block) return;
                 if(block.innerText.toLowerCase().includes(k) || k === '') r.classList.remove('filtered-out');
                 else r.classList.add('filtered-out');
             });
@@ -1007,7 +1043,7 @@
             if (sel.isCollapsed || !sel.toString().trim()) { styler.style.display = 'none'; return; }
             let node = sel.anchorNode;
             while (node && node !== document.body) {
-                if (node.classList && node.classList.contains('notion-block')) {
+                if (node.classList && (node.classList.contains('notion-block') || node.classList.contains('inline-msg-body'))) {
                     const range = sel.getRangeAt(0); const rect = range.getBoundingClientRect();
                     styler.style.left = `${rect.left + window.scrollX}px`; styler.style.top = `${rect.top + window.scrollY - 45}px`;
                     styler.style.display = 'flex'; return;
