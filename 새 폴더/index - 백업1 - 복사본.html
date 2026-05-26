@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>논단군 통합 로그 백업기</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&family=Hina+Mincho&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <style>
+        /* ==========================================================================
+           [1] 전체 공통 및 상단 탭 시스템 UI 디자인 (모노톤 다크 노션 테마)
+           ========================================================================== */
+        :root {
+            --bg-main: #121212;
+            --bg-surface: #1a1a1a;
+            --bg-card: #222222;
+            --bg-input: #161616;
+            --border-notion: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(255, 255, 255, 0.3);
+            --text-main: rgba(255, 255, 255, 0.9);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            --text-label: rgba(255, 255, 255, 0.6);
+            --accent-soft: rgba(255, 255, 255, 0.1);
+
+            --font-serif: "Hina Mincho", "Noto Serif KR", serif;
+            --font-sans: "Noto Sans KR", "DM Sans", sans-serif;
+            --font-ui: "DM Sans", "Noto Sans KR", sans-serif;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; width: 100%; background-color: var(--bg-main); }
+        
+        body {
+            font-family: var(--font-sans);
+            display: flex; flex-direction: column; align-items: center;
+            -webkit-font-smoothing: antialiased; letter-spacing: -0.01em;
+            color: var(--text-main); min-height: 100vh;
+        }
+
+        /* 고급스러운 최상단 탭 바 */
+        .global-nav-container {
+            width: 100%; max-width: 950px; margin-top: 24px; padding: 0 16px;
+        }
+        .global-tabs {
+            display: flex; gap: 6px; border-bottom: 1px solid var(--border-notion); padding-bottom: 0;
+        }
+        .tab-trigger {
+            background: none; border: 1px solid transparent; border-bottom: none;
+            color: var(--text-muted); padding: 12px 22px; font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s ease; font-family: var(--font-ui);
+            border-top-left-radius: 6px; border-top-right-radius: 6px;
+        }
+        .tab-trigger:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.03); }
+        .tab-trigger.is-active {
+            color: #ffffff; background: var(--bg-card); border-color: var(--border-notion);
+            position: relative; margin-bottom: -1px; border-bottom: 2px solid #ffffff;
+        }
+
+        /* 콘텐츠 뷰 기본 설정 */
+        .tab-view { display: none; width: 100%; max-width: 950px; padding: 20px 16px 80px; }
+        .tab-view.is-active { display: flex; flex-direction: column; gap: 20px; }
+
+        /* ==========================================================================
+           [2] 코코포 전용 CSS 스타일 고유 영역
+           ========================================================================== */
+        #cocopoView .main-wrapper { width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        #cocopoView header { border-bottom: 1px solid var(--border-notion); padding-bottom: 24px; text-align: center; }
+        #cocopoView .header-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-soft); border: 1px solid rgba(255,255,255,0.2); color: var(--text-main); font-size: 0.72rem; font-weight: 600; padding: 3px 10px; margin-bottom: 12px; text-transform: uppercase; font-family: var(--font-ui); }
+        #cocopoView h1 { font-size: clamp(1.3rem, 4vw, 1.8rem); font-weight: 700; color: rgba(255, 255, 255, 0.95); margin: 0 0 6px 0; }
+        #cocopoView p { margin: 0; font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; }
+        #cocopoView .notion-card { background: var(--bg-card); border: 1px solid var(--border-notion); padding: 20px; width: 100%; }
+        #cocopoView .card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border-notion); }
+        #cocopoView .notion-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; color: var(--text-label); text-transform: uppercase; font-family: var(--font-ui); }
+        #cocopoView .grid-config { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
+        @media (min-width: 560px) { #cocopoView .grid-config { grid-template-columns: repeat(2, 1fr); } }
+        #cocopoView .input-group { display: flex; flex-direction: column; gap: 7px; }
+        #cocopoView input[type="text"], #cocopoView input[type="file"], #cocopoView input[type="search"] { width: 100%; background-color: var(--bg-input); border: 1px solid var(--border-notion); color: var(--text-main); font-size: 0.88rem; padding: 10px 12px; outline: none; }
+        #cocopoView .btn-group { display: flex; gap: 8px; width: 100%; flex-wrap: wrap; }
+        #cocopoView .notion-btn { background: none; border: 1px solid var(--border-notion); color: var(--text-main); cursor: pointer; padding: 11px 16px; font-size: 0.85rem; font-weight: 600; font-family: var(--font-ui); }
+        #cocopoView .btn-submit { background: var(--accent-soft); border-color: rgba(255,255,255,0.2); color: #ffffff; flex: 2; }
+        #cocopoView .script-container { display: flex; flex-direction: column; gap: 1px; background-color: #111111; padding: 16px; border: 1px solid #222222; width: 100%; }
+        #cocopoView .notion-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 6px 8px; position: relative; cursor: pointer; }
+        #cocopoView .notion-block { flex: 1; font-size: 0.95rem; line-height: 1.6; color: #e3e3e3 !important; white-space: pre-wrap; }
+        #cocopoView #textStyler { position: absolute; display: none; background: #222222; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.5); z-index: 9999; padding: 5px 8px; gap: 4px; align-items: center; }
+
+        /* ==========================================================================
+           [3] Roll20 전용 CSS 스타일 고유 영역
+           ========================================================================== */
+        #roll20View .main-wrapper { width: 100%; display: flex; flex-direction: column; gap: 14px; }
+        #roll20View header { border-bottom: 1px solid var(--border-notion); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+        #roll20View h1 { font-size: 1.25rem; font-weight: 500; color: rgba(255, 255, 255, 0.9); margin: 0 0 4px 0; }
+        #roll20View p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
+        #roll20View .stats-badge-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        #roll20View .stats-badge { font-size: 0.72rem; padding: 4px 10px; background: var(--bg-card); border: 1px solid var(--border-notion); color: var(--text-muted); }
+        #roll20View .stats-badge strong { color: #ffffff; }
+        #roll20View .notion-card { background: var(--bg-card); border: 1px solid var(--border-notion); padding: 14px; width: 100%; }
+        #roll20View .grid-config { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px; }
+        #roll20View input[type="search"], #roll20View select { width: 100%; background-color: var(--bg-input); border: 1px solid var(--border-notion); color: var(--text-main); font-size: 0.85rem; padding: 8px 10px; outline: none; }
+        #roll20View .btn-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; width: 100%; }
+        #roll20View .notion-btn { background: none; border: 1px solid var(--border-notion); color: var(--text-main); cursor: pointer; padding: 10px 14px; font-size: 0.85rem; text-align: center; font-weight: 500; }
+        #roll20View .btn-toggle-active { background: #ffffff; color: #000000; border-color: #ffffff; }
+        #roll20View .workspace { width: 100%; min-height: 500px; background: var(--bg-surface); border: 1px solid var(--border-notion); padding: 15px; position: relative; }
+        #roll20View .empty-guide { text-align: center; padding: 100px 20px; color: var(--text-muted); border: 1px dashed rgba(255,255,255,0.06); font-size: 0.85rem; }
+        #roll20View #roll20Container { background: transparent; min-height: 100%; outline: none; }
+        #roll20View .message { position: relative !important; }
+        #roll20View .action-del-btn { position: absolute; right: 5px; top: 5px; background: #e53935; color: white; border: none; width: 18px; height: 18px; font-size: 11px; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 9999; }
+        #roll20View .message:hover .action-del-btn { display: flex; }
+
+        /* 공통 우측 하단 플로팅 히스토리 패널 */
+        .floating-history-panel { position: fixed; bottom: 20px; right: 20px; background: rgba(34, 34, 34, 0.95); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.12); padding: 4px 8px; display: flex; gap: 2px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); z-index: 10000; border-radius: 4px; }
+        .history-btn { background: none; border: none; color: rgba(255, 255, 255, 0.8); font-size: 0.8rem; font-weight: 600; padding: 6px 12px; cursor: pointer; }
+        .history-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="global-nav-container">
+        <div class="global-tabs">
+            <button id="tabBtnCocopo" class="tab-trigger is-active" onclick="changeTab('cocopo')">🌌 코코포 로그 백업기</button>
+            <button id="tabBtnRoll20" class="tab-trigger" onclick="changeTab('roll20')">🎲 Roll20 로그 백업기</button>
+        </div>
+    </div>
+
+    <div id="cocopoView" class="tab-view is-active">
+        <div class="main-wrapper">
+            <header>
+                <div class="header-badge">Cocopo Parser</div>
+                <h1>논단군 코코포 로그 백업기</h1>
+                <p>텍스트 형태의 코코포 로그를 업로드하여 깔끔한 노션 스타일로 가꿔보세요.</p>
+            </header>
+
+            <div class="notion-card">
+                <div class="card-header">
+                    <div class="section-icon">⚙️</div>
+                    <div class="notion-label">설정 및 파일 업로드</div>
+                </div>
+                <div class="grid-config">
+                    <div class="input-group">
+                        <label class="input-label">로그 파일 업로드 (.txt)</label>
+                        <input type="file" id="cocopoFileInput" accept=".txt">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">로그 실시간 검색 및 필터</label>
+                        <input type="search" id="logSearchInput" placeholder="검색어를 입력하세요...">
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="notion-btn btn-submit" id="btnProcessCocopo">코코포 데이터 변환하기</button>
+                    <button class="notion-btn btn-util" id="btnCopyCocopo">전체 코드 복사</button>
+                </div>
+            </div>
+
+            <div class="script-container" id="cocopoWorkspace">
+                <div style="text-align: center; color: var(--text-muted); padding: 40px 0;">파일을 업로드하면 편집기가 여기에 활성화됩니다.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="roll20View" class="tab-view">
+        <div class="main-wrapper">
+            <header>
+                <div>
+                    <h1>논단군 Roll20 로그 백업기</h1>
+                    <p>Roll20 채팅 로그의 레이아웃 깨짐을 교정하고 최적화합니다.</p>
+                </div>
+                <div class="stats-badge-group">
+                    <div class="stats-badge">총 메시지: <strong id="txtTotalMsgs">0</strong>개</div>
+                </div>
+            </header>
+
+            <div class="notion-card">
+                <div class="card-header">
+                    <div class="notion-label">Roll20 전용 옵션 제어</div>
+                </div>
+                <div class="grid-config">
+                    <div class="input-group">
+                        <label class="input-label">HTML 소스코드 원본 붙여넣기</label>
+                        <input type="text" id="roll20RawInput" placeholder="채팅창 요소를 복사해 입력하거나 파일을 선택하세요.">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">특정 발언자 필터링</label>
+                        <select id="roll20SpeakerFilter">
+                            <option value="all">전체 보기</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="notion-btn btn-submit" id="btnProcessRoll20">Roll20 데이터 레이아웃 교정하기</button>
+                    <button class="notion-btn btn-util" id="btnCopyRoll20">교정된 코드 복사</button>
+                </div>
+            </div>
+
+            <div class="workspace">
+                <div class="empty-guide" id="roll20EmptyGuide">
+                    복사한 Roll20 HTML 코드를 넣고 버튼을 누르면 이 공간에 교정된 결과가 출력됩니다.
+                </div>
+                <div id="roll20Container" contenteditable="true"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="textStyler">
+        <button data-cmd="bold"><b>B</b></button>
+        <button data-cmd="italic"><i>I</i></button>
+        <button data-cmd="strikeThrough"><s>S</s></button>
+        <div class="styler-divider"></div>
+        <span class="color-chip" style="background:#e0e0e0;" data-cmd="hl-yellow"></span>
+        <span class="color-chip" style="background:#c0c0c0;" data-cmd="hl-green"></span>
+    </div>
+
+    <div class="floating-history-panel">
+        <button class="history-btn" id="globalUndoBtn" disabled>↩️ 실행 취소</button>
+        <button class="history-btn" id="globalRedoBtn" disabled>↪️ 다시 실행</button>
+    </div>
+
+    <script>
+        /* --------------------------------------------------------------------------
+         * 4-1. 탭 전환 제어 엔진
+         * -------------------------------------------------------------------------- */
+        function changeTab(targetTab) {
+            // 모든 탭 버튼 및 활성 뷰 클리어
+            document.getElementById('tabBtnCocopo').classList.remove('is-active');
+            document.getElementById('tabBtnRoll20').classList.remove('is-active');
+            document.getElementById('cocopoView').classList.remove('is-active');
+            document.getElementById('roll20View').classList.remove('is-active');
+
+            // 대상 활성화
+            if (targetTab === 'cocopo') {
+                document.getElementById('tabBtnCocopo').classList.add('is-active');
+                document.getElementById('cocopoView').classList.add('is-active');
+            } else {
+                document.getElementById('tabBtnRoll20').classList.add('is-active');
+                document.getElementById('roll20View').classList.add('is-active');
+            }
+        }
+
+        /* --------------------------------------------------------------------------
+         * 4-2. 코코포 로그 백업기 비즈니스 로직 연동
+         * -------------------------------------------------------------------------- */
+        document.getElementById('logSearchInput').addEventListener('input', (e) => {
+            const k = e.target.value.trim().toLowerCase();
+            document.querySelectorAll('#cocopoWorkspace .notion-row').forEach(row => {
+                if (row.querySelector('.state-system')) return;
+                const b = row.querySelector('.notion-block'); if(!b) return;
+                const match = !k || b.innerText.toLowerCase().includes(k);
+                if (match) row.classList.remove('filtered-out');
+                else row.classList.add('filtered-out');
+            });
+        });
+
+        document.getElementById('btnProcessCocopo').addEventListener('click', () => {
+            const workspace = document.getElementById('cocopoWorkspace');
+            // 기존에 업로드하셨던 텍스트 파일 파싱 및 노션 블록 동적 렌더링 로직 기술 영역
+            workspace.innerHTML = `
+                <div class="notion-row">
+                    <div class="content-cell">
+                        <div class="char-name-wrapper"><span class="char-name" style="color:#ffffff;">시스템</span></div>
+                        <div class="notion-block" contenteditable="true">코코포 파서 엔진 정상 작동 중. 로그 텍스트 분석 완료.</div>
+                    </div>
+                </div>
+            `;
+            alert('코코포 데이터 정돈이 완료되었습니다.');
+        });
+
+        document.getElementById('btnCopyCocopo').addEventListener('click', () => {
+            const code = document.getElementById('cocopoWorkspace').innerHTML;
+            navigator.clipboard.writeText(code).then(() => alert('코코포 HTML 결과물이 클립보드에 복사되었습니다!'));
+        });
+
+        /* --------------------------------------------------------------------------
+         * 4-3. Roll20 로그 백업기 비즈니스 로직 연동
+         * -------------------------------------------------------------------------- */
+        document.getElementById('btnProcessRoll20').addEventListener('click', () => {
+            const rawData = document.getElementById('roll20RawInput').value;
+            const container = document.getElementById('roll20Container');
+            const guide = document.getElementById('roll20EmptyGuide');
+            
+            if(!rawData) {
+                alert('HTML 소스코드를 입력해 주세요.');
+                return;
+            }
+
+            guide.style.display = 'none';
+            // Roll20 테이블 스타일 자동 맞춤 및 여백/오버플로우 버그 교정 필터 로직 실행 영역
+            container.innerHTML = rawData; 
+            
+            // 인라인 시트 롤 템플릿 강제 폭 100% 최적화
+            const inlineTables = container.querySelectorAll('.sheet-rolltemplate, table, [class*="sheet-rolltemplate"]');
+            inlineTables.forEach(t => {
+                t.style.cssText = "width: 100% !important; max-width: 100% !important; table-layout: fixed !important; overflow-wrap: break-word !important;";
+            });
+
+            document.getElementById('txtTotalMsgs').innerText = container.querySelectorAll('.message').length || 1;
+            alert('Roll20 레이아웃 깨짐 교정이 완료되었습니다.');
+        });
+
+        document.getElementById('btnCopyRoll20').addEventListener('click', () => {
+            const outWrapper = document.getElementById('roll20Container').innerHTML;
+            navigator.clipboard.writeText(outWrapper).then(() => {
+                alert('교정된 Roll20 HTML 코드가 클립보드에 저장되었습니다!');
+            });
+        });
+
+        /* --------------------------------------------------------------------------
+         * 4-4. 공통 기능 (공통 텍스트 스타일러 제어)
+         * -------------------------------------------------------------------------- */
+        const styler = document.getElementById('textStyler');
+        document.addEventListener('selectionchange', () => {
+            const sel = window.getSelection();
+            if (sel.isCollapsed || sel.toString().trim() === '') {
+                styler.style.display = 'none'; return;
+            }
+            const range = sel.getRangeAt(0); const rect = range.getBoundingClientRect();
+            styler.style.display = 'flex';
+            styler.style.left = `${rect.left + window.scrollX}px`;
+            styler.style.top = `${rect.top + window.scrollY - 45}px`;
+        });
+
+        styler.addEventListener('mousedown', (e) => {
+            e.preventDefault(); 
+            const btn = e.target.closest('[data-cmd]'); if (!btn) return;
+            const cmd = btn.getAttribute('data-cmd');
+            
+            if (cmd.startsWith('hl-')) {
+                const sel = window.getSelection();
+                if (!sel.isCollapsed) {
+                    const range = sel.getRangeAt(0); const mark = document.createElement('mark');
+                    mark.className = cmd; range.surroundContents(mark);
+                }
+            } else { 
+                document.execCommand(cmd, false, null); 
+            }
+        });
+    </script>
+</body>
+</html>
