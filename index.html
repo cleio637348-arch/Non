@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* 편집기 내부 전용 UI 디자인 (다크 노션 테마) */
+        /* 편집기 내부 전용 UI 디자인 (모노톤 다크 노션 테마 완벽 준수) */
         :root {
             --bg-main: #121212;
             --bg-surface: #1a1a1a;
@@ -18,22 +18,29 @@
             --border-notion: rgba(255, 255, 255, 0.08);
             --border-active: rgba(255, 255, 255, 0.2);
             --text-main: rgba(255, 255, 255, 0.85);
-            --text-muted: rgba(255, 255, 255, 0.4);
+            --text-muted: #aaaaaa; 
             --text-label: rgba(255, 255, 255, 0.5);
-            --accent-active: #4a90e2;
+            --accent-active: #ffffff;
+            --accent-text: #000000;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
         body {
-            margin: 0; padding: 20px 16px;
+            margin: 0; padding: 20px 16px 80px;
             background-color: var(--bg-main); font-family: "Noto Sans KR", sans-serif;
             color: var(--text-main); display: flex; flex-direction: column; align-items: center;
         }
         .main-wrapper { width: 100%; max-width: 950px; display: flex; flex-direction: column; gap: 14px; }
         
-        header { border-bottom: 1px solid var(--border-notion); padding-bottom: 12px; }
+        header { border-bottom: 1px solid var(--border-notion); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
         header h1 { font-size: 1.25rem; font-weight: 500; color: rgba(255, 255, 255, 0.9); margin: 0 0 4px 0; }
         header p { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
+
+        .stats-badge-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .stats-badge { font-size: 0.72rem; padding: 4px 10px; background: var(--bg-card); border: 1px solid var(--border-notion); color: var(--text-muted); }
+        .stats-badge strong { color: #ffffff; }
+        .btn-toggle-dashboard { background: none; border: 1px solid rgba(255,255,255,0.2); color: #ffffff; font-size: 0.72rem; padding: 4px 10px; cursor: pointer; font-weight: 500; }
+        .btn-toggle-dashboard:hover { background: rgba(255,255,255,0.08); }
 
         .notion-card { background: var(--bg-card); border: 1px solid var(--border-notion); padding: 14px; width: 100%; }
         .grid-config { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px; }
@@ -44,82 +51,114 @@
             width: 100%; background-color: var(--bg-input); border: 1px solid var(--border-notion);
             color: var(--text-main); font-size: 0.85rem; padding: 8px 10px; outline: none;
         }
+        /* 드롭다운 옵션의 배경색과 글자색 버그 수정 */
+        select option {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+        }
         select {
             cursor: pointer; appearance: none;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2'><polyline points='6 9 12 15 18 9'></polyline></svg>");
             background-repeat: no-repeat; background-position: right 8px center; background-size: 14px; padding-right: 30px;
         }
 
-        .btn-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; width: 100%; }
+        .btn-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; width: 100%; }
         .notion-btn {
             background: none; border: 1px solid var(--border-notion); color: var(--text-main);
             cursor: pointer; padding: 10px 14px; font-size: 0.85rem; text-align: center; font-weight: 500;
         }
         .notion-btn:hover { background: rgba(255,255,255,0.04); }
-        .btn-toggle-active { background: var(--accent-active); color: #ffffff; border-color: var(--accent-active); }
-        .btn-toggle-active:hover { background: #357abd; }
+        .btn-toggle-active { background: #ffffff; color: #000000; border-color: #ffffff; }
+        .btn-toggle-active:hover { background: rgba(255,255,255,0.85); }
 
-        /* 작업 공간 */
-        .workspace { width: 100%; min-height: 500px; background: #1a1a1a; border: 1px solid var(--border-notion); padding: 15px; }
+        .stats-dashboard-card { background: var(--bg-card); border: 1px solid var(--border-notion); padding: 14px; display: none; width: 100%; flex-direction: column; gap: 10px; }
+        .stats-dashboard-title { font-size: 0.82rem; font-weight: 700; color: #ffffff; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+        .stats-item-chip { background: var(--bg-input); border: 1px solid var(--border-notion); padding: 6px 10px; font-size: 0.78rem; display: flex; flex-direction: column; gap: 2px; }
+        .stats-item-name { color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .stats-item-count { font-weight: 700; color: #ffffff; font-size: 0.85rem; }
+        .stats-item-count span { font-weight: 400; color: var(--text-muted); font-size: 0.72rem; margin-left: 2px; }
+
+        #roll20Container mark.search-highlight {
+            background-color: #ffeb3b !important; color: #000000 !important; border-radius: 2px !important; padding: 0 2px !important; font-weight: 500 !important; box-shadow: 0 0 4px #ffeb3b !important;
+        }
+
+        #roll20Container font[color="#aaaaaa"],
+        #roll20Container font[color="rgb(170, 170, 170)"],
+        #roll20Container span.custom-gray-text { color: #aaaaaa !important; }
+
+        #roll20Container.unify-bg-active .message { background-color: rgb(241, 241, 241) !important; border-color: transparent !important; box-shadow: none !important; color: #000000 !important; }
+        #roll20Container.unify-bg-active font[color="#aaaaaa"],
+        #roll20Container.unify-bg-active font[color="rgb(170, 170, 170)"],
+        #roll20Container.unify-bg-active span.custom-gray-text { color: #666666 !important; }
+
+        .text-styler-toolbar {
+            position: absolute; background: #2c2c2c; border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: none; padding: 4px; gap: 2px; z-index: 10005; border-radius: 4px;
+        }
+        .styler-btn {
+            background: none; border: none; color: #ffffff; width: 28px; height: 26px; font-size: 0.75rem; font-weight: bold; cursor: pointer; border-radius: 2px; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .styler-btn:hover { background: rgba(255,255,255,0.12); }
+        .styler-btn.btn-txt-gray { width: auto; padding: 0 6px; font-weight: normal; font-size: 0.7rem; color: #aaaaaa; }
+
+        .workspace { width: 100%; min-height: 500px; background: var(--bg-surface); border: 1px solid var(--border-notion); padding: 15px; position: relative; }
         .empty-guide { text-align: center; padding: 100px 20px; color: var(--text-muted); border: 1px dashed rgba(255,255,255,0.06); font-size: 0.85rem; line-height: 1.6; }
         
         #roll20Container { background: transparent; min-height: 100%; outline: none; }
-        
-        /* 에디터 내부 가이드 스크린샷 뷰 규칙 */
         #roll20Container img { max-width: 100% !important; height: auto !important; }
-        /* 주사위 템플릿 반응형 완전 최적화 */
+        
         #roll20Container .sheet-rolltemplate,
         #roll20Container [class*="sheet-rolltemplate"],
         #roll20Container table { 
-            width: 100% !important; 
-            max-width: 100% !important;
-            min-width: 0 !important;
-            box-sizing: border-box !important; 
-            table-layout: fixed !important;
-            overflow-wrap: break-word !important;
-            word-break: break-word !important;
+            width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; table-layout: fixed !important; overflow-wrap: break-word !important; word-break: break-word !important;
         }
-        #roll20Container td, #roll20Container th {
-            width: auto !important;
-            max-width: 100% !important;
-            overflow-wrap: break-word !important;
-            word-break: break-word !important;
-        }
-        #roll20Container .message {
-            width: 100% !important;
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-            overflow: hidden !important;
-        }
-        
-        /* 버튼 눌러 회색 통일 활성화되었을 때만 에디터 내부에 실시간 스타일 피드백 반영 */
-        #roll20Container.unify-bg-active .message { background-color: rgb(241, 241, 241) !important; border-color: transparent !important; box-shadow: none !important; }
-
-        /* [요구사항 1] 에디터 내 구분선은 무조건 회색 처리 */
+        #roll20Container td, #roll20Container th { width: auto !important; max-width: 100% !important; overflow-wrap: break-word !important; word-break: break-word !important; }
+        #roll20Container .message { width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; overflow: hidden !important; }
         #roll20Container .message .spacer { background-color: rgb(225, 225, 225) !important; }
 
         .message { position: relative !important; }
         .action-del-btn {
-            position: absolute; right: 5px; top: 5px; background: #e53935; color: white; border: none; width: 18px; height: 18px; font-size: 11px;
-            cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 9999; border-radius: 2px; font-weight: bold;
+            position: absolute; right: 5px; top: 5px; background: #e53935; color: white; border: none; width: 18px; height: 18px; font-size: 11px; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 9999; border-radius: 2px; font-weight: bold;
         }
         .message:hover .action-del-btn { display: flex; }
         .search-filtered-out { display: none !important; }
+
+        /* 다중 분리용 헤더선 디자인 */
+        .script-group-header {
+            display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-notion); padding: 10px 14px; margin: 18px 0 10px 0; font-size: 0.85rem; font-weight: 500; color: rgba(255,255,255,0.8); user-select: none;
+        }
+        .script-group-header:first-of-type { margin-top: 0; }
+
+        .floating-history-panel {
+            position: fixed; bottom: 20px; right: 20px; background: rgba(34, 34, 34, 0.95); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.12); padding: 4px 8px; display: flex; gap: 2px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); z-index: 10000; border-radius: 4px;
+        }
+        .history-btn { background: none; border: none; color: rgba(255, 255, 255, 0.8); font-size: 0.8rem; font-weight: 600; padding: 6px 12px; cursor: pointer; border-radius: 2px; }
+        .history-btn:hover:not(:disabled) { background: rgba(255,255,255,0.08); }
+        .history-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+        .btn-scroll-top { border-left: 1px solid rgba(255,255,255,0.15); margin-left: 4px; padding-left: 12px; border-radius: 0; }
     </style>
 </head>
 <body>
 
     <div class="main-wrapper">
         <header>
-            <h1>논단군 Roll20 로그 백업기</h1>
-            <p>간단하게 로그를 백업해보아요</p>
+            <div>
+                <h1>논단군 Roll20 로그 백업기</h1>
+                <p>간단하게 로그를 백업해보아요</p>
+            </div>
+            <div class="stats-badge-group">
+                <div class="stats-badge" id="statTotalMessages">총 블록: <strong>0개</strong></div>
+                <div class="stats-badge" id="statTotalChars">총 글자수: <strong>0자</strong></div>
+                <button class="btn-toggle-dashboard" id="btnToggleDashboard">상세 리포트 열기</button>
+            </div>
         </header>
 
         <div class="notion-card">
             <div class="grid-config">
                 <div class="input-group">
-                    <span class="input-label">본문 실시간 검색</span>
-                    <input type="search" id="logSearchInput" placeholder="검색어 입력 시 해당 문장만 필터링...">
+                    <span class="input-label">본문 검색</span>
+                    <input type="search" id="logSearchInput" placeholder="검색어 입력...">
                 </div>
                 <div class="input-group">
                     <span class="input-label">캐릭터 일괄 삭제</span>
@@ -127,20 +166,26 @@
                         <select id="characterSelector">
                             <option value="">로그를 붙여넣으면 명단이 추출됩니다</option>
                         </select>
-                        <button class="notion-btn" id="btnDeleteCharMessages" style="flex:0 0 auto; width:90px; padding:0; color:#ff8888; font-weight: 500;">일괄 삭제</button>
+                        <button class="notion-btn" id="btnDeleteCharMessages" style="flex:0 0 auto; width:90px; padding:0; color:#ff8888; font-weight: 500; border-color: rgba(255,136,136,0.2);">일괄 삭제</button>
                     </div>
                 </div>
             </div>
 
             <div class="btn-group">
-                <button class="notion-btn" id="btnUnifyBg">원본 컬러 유지</button>
-                <button class="notion-btn" id="btnDeleteHidden" style="color:#ff8888; border-color: rgba(255,136,136,0.2);">시스템 숨김 메시지 삭제</button>
+                <button class="notion-btn btn-toggle-active" id="btnOrigBg">원본 컬러 유지</button>
+                <button class="notion-btn" id="btnUnifyBg">회색 일괄 통일</button>
+                <button class="notion-btn" id="btnFixSpelling" style="color:rgba(168,255,178,0.85); border-color: rgba(168,255,178,0.2);">부호 일괄 교정</button>
             </div>
+        </div>
+
+        <div class="stats-dashboard-card" id="statsDashboardCard">
+            <div class="stats-dashboard-title">상세 글자 수 리포트 (공백 포함)</div>
+            <div class="stats-grid" id="statsGridContainer"></div>
         </div>
 
         <div class="notion-card" style="padding: 10px 16px;">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                <span style="font-size:0.75rem; color:var(--text-muted);">※ 가공 완료 후 복사본을 티스토리 글쓰기 [HTML 모드]에 통째로 붙여넣으세요.</span>
+                <span style="font-size:0.75rem; color:var(--text-muted);">※ 완료 후 복사본을 티스토리 글쓰기 [HTML 모드]에 통째로 붙여넣으세요.</span>
                 <button class="notion-btn" id="btnManualCopy" style="padding:6px 20px; font-size:0.85rem; background:#ffffff; color:#121212; font-weight: bold; border-color: #fff;">코드 복사 (Alt+C)</button>
             </div>
         </div>
@@ -153,6 +198,19 @@
         </div>
     </div>
 
+    <div class="text-styler-toolbar" id="textStylerToolbar">
+        <button class="styler-btn" data-cmd="bold" style="font-weight:bold;">B</button>
+        <button class="styler-btn" data-cmd="italic" style="font-style:italic;">I</button>
+        <button class="styler-btn" data-cmd="strikeThrough" style="text-decoration:line-through;">S</button>
+        <button class="styler-btn btn-txt-gray" data-cmd="custom-gray">회색</button>
+    </div>
+
+    <div class="floating-history-panel">
+        <button id="btnUndo" class="history-btn" disabled>뒤로</button>
+        <button id="btnRedo" class="history-btn" disabled>앞으로</button>
+        <button id="btnScrollTop" class="history-btn btn-scroll-top">↑ Top</button>
+    </div>
+
     <script>
         const mainWorkspace = document.getElementById('mainWorkspace');
         const roll20Container = document.getElementById('roll20Container');
@@ -160,12 +218,49 @@
         const logSearchInput = document.getElementById('logSearchInput');
         const characterSelector = document.getElementById('characterSelector');
         const btnDeleteCharMessages = document.getElementById('btnDeleteCharMessages');
-        const btnDeleteHidden = document.getElementById('btnDeleteHidden');
+        const btnFixSpelling = document.getElementById('btnFixSpelling');
+        const btnOrigBg = document.getElementById('btnOrigBg');
         const btnUnifyBg = document.getElementById('btnUnifyBg');
         const btnManualCopy = document.getElementById('btnManualCopy');
+        
+        const btnToggleDashboard = document.getElementById('btnToggleDashboard');
+        const statsDashboardCard = document.getElementById('statsDashboardCard');
+        const textStylerToolbar = document.getElementById('textStylerToolbar');
 
-        // [요구사항 3] 자동으로 회색 통일되지 않도록 기본 상태를 false(유지)로 선언
         let flagBgUnified = false;
+        let isDashboardOpen = false;
+        let scriptSetIndex = 0;
+
+        let undoStack = [];
+        let redoStack = [];
+        let isHistoryAction = false;
+
+        function saveHistoryState() {
+            if (isHistoryAction) return;
+            undoStack.push({
+                containerHTML: roll20Container.innerHTML,
+                guideDisplay: uploadGuide.style.display,
+                selectOptions: characterSelector.innerHTML
+            });
+            redoStack = [];
+            updateHistoryButtons();
+        }
+
+        function updateHistoryButtons() {
+            document.getElementById('btnUndo').disabled = (undoStack.length === 0);
+            document.getElementById('btnRedo').disabled = (redoStack.length === 0);
+        }
+
+        btnToggleDashboard.addEventListener('click', () => {
+            isDashboardOpen = !isDashboardOpen;
+            if (isDashboardOpen) {
+                btnToggleDashboard.textContent = "상세 리포트 접기";
+                updateLogStatistics();
+            } else {
+                btnToggleDashboard.textContent = "상세 리포트 열기";
+                statsDashboardCard.style.display = "none";
+            }
+        });
 
         mainWorkspace.addEventListener('paste', function(e) {
             e.preventDefault();
@@ -173,6 +268,7 @@
             if (!htmlData) htmlData = (e.clipboardData || window.clipboardData).getData('text/plain');
             if (!htmlData) { alert('클립보드에서 데이터를 가져오지 못했습니다.'); return; }
 
+            saveHistoryState();
             uploadGuide.style.display = 'none';
             roll20Container.style.display = 'block';
 
@@ -180,23 +276,41 @@
             const doc = parser.parseFromString(htmlData, 'text/html');
             const incomingRoot = doc.querySelector('.content') || doc.body;
             
-            // [요구사항 2] 연속 대사 시 2번 사진 상태를 1번 사진 상태로 정리하는 결합 엔진 가동
+            const incomingMessages = incomingRoot.querySelectorAll('.message');
+            incomingMessages.forEach(m => {
+                if ((m.textContent || "").includes("This message has been hidden.")) {
+                    m.remove();
+                }
+            });
+            
             processContinuousMessages(incomingRoot);
 
-            roll20Container.innerHTML = incomingRoot.innerHTML;
+            scriptSetIndex++;
+            const groupHeader = document.createElement('div');
+            groupHeader.className = 'script-group-header';
+            groupHeader.setAttribute('contenteditable', 'false');
+            groupHeader.innerHTML = `<span> 스크립트 세트 #${scriptSetIndex}</span>`;
+            
+            const fragment = document.createDocumentFragment();
+            fragment.appendChild(groupHeader);
+
+            Array.from(incomingRoot.childNodes).forEach(node => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    if (node.classList.contains('message')) {
+                        node.setAttribute('contenteditable', 'true');
+                    }
+                    fragment.appendChild(node);
+                }
+            });
+
+            roll20Container.appendChild(fragment);
+
             refreshDeleteButtons();
             updateCharacterList();
+            backupOriginalHtmlState();
+            updateLogStatistics(); 
         });
 
-        // ─── 핵심 헬퍼 ───────────────────────────────────────────────
-
-        // Roll20 실제 구조:
-        //  ① 화자의 첫 메시지  : .spacer + .avatar + .by(이름:) + 텍스트
-        //  ② 연속 같은 화자    : .spacer/.avatar/.by 모두 없이 텍스트만
-        //  ③ desc/system(지문) : message.desc / message.system
-        //  ④ 주사위 결과       : message.rollresult  (.by 있음)
-
-        // .by 에서 화자 이름 추출 (없으면 null)
         function getSpeakerName(msgNode) {
             if (!msgNode || !msgNode.classList) return null;
             const byNode = msgNode.querySelector('.by');
@@ -204,15 +318,11 @@
             return byNode.textContent.replace(/:/g, '').trim() || null;
         }
 
-        // desc / system 계열 → 연속 흐름 차단 기준
         function isBreaker(node) {
             if (!node || !node.classList) return true;
-            return node.classList.contains('desc') ||
-                   node.classList.contains('description') ||
-                   node.classList.contains('system');
+            return node.classList.contains('desc') || node.classList.contains('description') || node.classList.contains('system');
         }
 
-        // .by가 없는 general 메시지 = Roll20 연속 대사 단락
         function isAnonymousContinuation(node) {
             if (!node || !node.classList) return false;
             if (isBreaker(node)) return false;
@@ -220,7 +330,6 @@
             return !node.querySelector('.by');
         }
 
-        // spacer 회색 고정
         function ensureGraySpacer(element) {
             if (!element || element.nodeType !== Node.ELEMENT_NODE) return;
             element.querySelectorAll('.spacer').forEach(s =>
@@ -234,58 +343,32 @@
             return c;
         }
 
-        // ─── 3번: 연속 대사 병합 엔진 ────────────────────────────────
-        // 같은 화자의 연속 메시지(.by 없는 단락)를 첫 메시지에 합치고 제거
         function processContinuousMessages(rootElement) {
-            // 살아있는 컬렉션 대신 스냅샷 배열로 순회
             const nodes = Array.from(rootElement.querySelectorAll(':scope > .message'));
-            let lastAnchor = null; // 가장 최근 "이름 있는" 메시지
+            let lastAnchor = null;
 
             nodes.forEach(node => {
                 ensureGraySpacer(node);
-
-                if (isBreaker(node)) {
-                    lastAnchor = null;
-                    return;
-                }
-
-                if (node.classList.contains('rollresult')) {
-                    // 주사위는 자체 .by가 있지만 독립 블록으로 취급
-                    // → lastAnchor 유지 (같은 캐릭터의 주사위로 간주)
-                    return;
-                }
+                if (isBreaker(node)) { lastAnchor = null; return; }
+                if (node.classList.contains('rollresult')) return;
 
                 if (isAnonymousContinuation(node)) {
-                    // .by 없는 연속 대사 → lastAnchor에 병합
                     if (lastAnchor) {
                         lastAnchor.appendChild(document.createElement('br'));
                         Array.from(node.childNodes).forEach(child => {
                             const cl = child.classList;
-                            const skip = cl && (
-                                cl.contains('spacer') ||
-                                cl.contains('flyout') ||
-                                cl.contains('action-del-btn')
-                            );
+                            const skip = cl && (cl.contains('spacer') || cl.contains('flyout') || cl.contains('action-del-btn'));
                             if (!skip) lastAnchor.appendChild(cloneWithGraySpacer(child));
                         });
                         node.remove();
                     }
-                    // lastAnchor 없는 고아 continuation → 그냥 냅둠
                 } else {
-                    // .by 있는 새 화자 메시지 → 앵커 교체
                     const speaker = getSpeakerName(node);
                     if (speaker && lastAnchor && getSpeakerName(lastAnchor) === speaker) {
-                        // 같은 화자 새 단락 → 병합 (spacer·avatar·by 제외하고 내용만)
                         lastAnchor.appendChild(document.createElement('br'));
                         Array.from(node.childNodes).forEach(child => {
                             const cl = child.classList;
-                            const skip = cl && (
-                                cl.contains('spacer') ||
-                                cl.contains('avatar') ||
-                                cl.contains('by') ||
-                                cl.contains('flyout') ||
-                                cl.contains('action-del-btn')
-                            );
+                            const skip = cl && (cl.contains('spacer') || cl.contains('avatar') || cl.contains('by') || cl.contains('flyout') || cl.contains('action-del-btn'));
                             if (!skip) lastAnchor.appendChild(cloneWithGraySpacer(child));
                         });
                         node.remove();
@@ -296,18 +379,248 @@
             });
         }
 
-        // ─── refreshDeleteButtons / updateCharacterList ───────────────
+        function backupOriginalHtmlState() {
+            roll20Container.querySelectorAll('.message').forEach(m => {
+                if (!m.hasAttribute('data-orig-html')) {
+                    m.setAttribute('data-orig-html', m.innerHTML);
+                }
+            });
+        }
+
+        function highlightTextNode(node, keyword) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const text = node.nodeValue;
+                const idx = text.toLowerCase().indexOf(keyword.toLowerCase());
+                if (idx >= 0) {
+                    const matchedText = text.substr(idx, keyword.length);
+                    const before = document.createTextNode(text.substring(0, idx));
+                    const after = document.createTextNode(text.substring(idx + keyword.length));
+                    
+                    const mark = document.createElement('mark');
+                    mark.className = 'search-highlight';
+                    mark.setAttribute('contenteditable', 'false');
+                    mark.textContent = matchedText;
+
+                    const parent = node.parentNode;
+                    parent.insertBefore(before, node);
+                    parent.insertBefore(mark, node);
+                    parent.insertBefore(after, node);
+                    parent.removeChild(node);
+                    return true;
+                }
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                if (node.classList.contains('action-del-btn') || node.classList.contains('script-group-header')) return false;
+                const children = Array.from(node.childNodes);
+                let changed = false;
+                for (let child of children) {
+                    if (highlightTextNode(child, keyword)) changed = true;
+                }
+                return changed;
+            }
+            return false;
+        }
+
+        logSearchInput.addEventListener('input', function(e) {
+            const val = e.target.value.trim();
+            roll20Container.querySelectorAll('.message').forEach(m => {
+                if (m.hasAttribute('data-orig-html')) { m.innerHTML = m.getAttribute('data-orig-html'); }
+                
+                const currentDel = m.querySelector('.action-del-btn');
+                if (!currentDel) {
+                    const delBtn = document.createElement('span');
+                    delBtn.className = 'action-del-btn';
+                    delBtn.innerText = '×';
+                    delBtn.setAttribute('contenteditable', 'false');
+                    m.appendChild(delBtn);
+                }
+
+                if (!val) {
+                    m.classList.remove('search-filtered-out');
+                } else {
+                    const txtContent = m.innerText || "";
+                    if (txtContent.toLowerCase().includes(val.toLowerCase())) {
+                        m.classList.remove('search-filtered-out');
+                        highlightTextNode(m, val);
+                    } else {
+                        m.classList.add('search-filtered-out');
+                    }
+                }
+            });
+        });
+
+        function updateLogStatistics() {
+            const messages = roll20Container.querySelectorAll('.message');
+            if (messages.length === 0) {
+                statsDashboardCard.style.display = "none";
+                document.getElementById('statTotalMessages').innerHTML = `총 블록: <strong>0개</strong>`;
+                document.getElementById('statTotalChars').innerHTML = `총 글자수: <strong>0자</strong>`;
+                return;
+            }
+
+            let globalTotalChars = 0;
+            let narrativeChars = 0; 
+            const characterCharMap = {}; 
+
+            messages.forEach(m => {
+                const clone = m.cloneNode(true);
+                const dBtn = clone.querySelector('.action-del-btn');
+                if (dBtn) dBtn.remove();
+                
+                const blockText = clone.innerText || "";
+                const blockLen = blockText.length;
+                globalTotalChars += blockLen;
+
+                if (isBreaker(m)) {
+                    narrativeChars += blockLen;
+                } else {
+                    const name = getSpeakerName(m);
+                    if (name) {
+                        characterCharMap[name] = (characterCharMap[name] || 0) + blockLen;
+                    } else {
+                        let prev = m.previousElementSibling;
+                        let foundSpeaker = null;
+                        while (prev) {
+                            if (prev.classList.contains('message')) {
+                                if (isBreaker(prev)) break;
+                                const pName = getSpeakerName(prev);
+                                if (pName) { foundSpeaker = pName; break; }
+                            }
+                            prev = prev.previousElementSibling;
+                        }
+                        if (foundSpeaker) {
+                            characterCharMap[foundSpeaker] = (characterCharMap[foundSpeaker] || 0) + blockLen;
+                        } else {
+                            narrativeChars += blockLen;
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('statTotalMessages').innerHTML = `총 블록: <strong>${messages.length}개</strong>`;
+            document.getElementById('statTotalChars').innerHTML = `총 글자수: <strong>${globalTotalChars.toLocaleString()}자</strong>`;
+
+            if (isDashboardOpen) {
+                const statsGridContainer = document.getElementById('statsGridContainer');
+                statsGridContainer.innerHTML = "";
+                statsDashboardCard.style.display = "flex";
+
+                if (narrativeChars > 0) {
+                    const chip = document.createElement('div');
+                    chip.className = "stats-item-chip";
+                    chip.innerHTML = `<span class="stats-item-name">🎬 지문 / 시스템</span><span class="stats-item-count">${narrativeChars.toLocaleString()}<span>자</span></span>`;
+                    statsGridContainer.appendChild(chip);
+                }
+
+                Object.keys(characterCharMap).sort((a, b) => characterCharMap[b] - characterCharMap[a]).forEach(charName => {
+                    const chip = document.createElement('div');
+                    chip.className = "stats-item-chip";
+                    chip.innerHTML = `<span class="stats-item-name">${charName}</span><span class="stats-item-count">${characterCharMap[charName].toLocaleString()}<span>자</span></span>`;
+                    statsGridContainer.appendChild(chip);
+                });
+            }
+        }
+
+        document.addEventListener('selectionchange', () => {
+            const selection = window.getSelection();
+            if (selection.isCollapsed || !roll20Container.contains(selection.anchorNode)) {
+                textStylerToolbar.style.display = 'none'; return;
+            }
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            if (rect.width > 0) {
+                textStylerToolbar.style.display = 'flex';
+                textStylerToolbar.style.top = `${rect.top + window.scrollY - 38}px`;
+                textStylerToolbar.style.left = `${rect.left + window.scrollX + (rect.width / 2) - (textStylerToolbar.offsetWidth / 2)}px`;
+            }
+        });
+
+        textStylerToolbar.addEventListener('mousedown', (e) => {
+            e.preventDefault(); 
+            const btn = e.target.closest('[data-cmd]');
+            if (!btn) return;
+
+            saveHistoryState();
+            const cmd = btn.getAttribute('data-cmd');
+            
+            if (cmd === 'custom-gray') {
+                const selection = window.getSelection();
+                if (!selection.isCollapsed) {
+                    const range = selection.getRangeAt(0);
+                    let containerNode = range.commonAncestorContainer;
+                    if (containerNode.nodeType === Node.TEXT_NODE) containerNode = containerNode.parentNode;
+                    
+                    const existingSpan = containerNode.closest('span.custom-gray-text') || containerNode.closest('font[color="#aaaaaa"]');
+                    
+                    if (existingSpan) {
+                        const parent = existingSpan.parentNode;
+                        while (existingSpan.firstChild) { parent.insertBefore(existingSpan.firstChild, existingSpan); }
+                        existingSpan.remove();
+                    } else {
+                        const span = document.createElement('span');
+                        span.className = 'custom-gray-text';
+                        span.style.color = '#aaaaaa';
+                        range.surroundContents(span);
+                    }
+                }
+            } else {
+                document.execCommand(cmd, false, null);
+            }
+            
+            roll20Container.querySelectorAll('.message').forEach(m => { m.setAttribute('data-orig-html', m.innerHTML); });
+            updateLogStatistics();
+        });
+
+        btnFixSpelling.addEventListener('click', function() {
+            const messages = roll20Container.querySelectorAll('.message');
+            if (messages.length === 0) { alert('교정할 로그 데이터가 존재하지 않습니다.'); return; }
+            if (!confirm('전체 본문의 문장 부호 오류를 일괄 자동 교정하시겠습니까?')) return;
+
+            saveHistoryState();
+            let fixedCount = 0;
+
+            messages.forEach(m => {
+                let currentHtml = m.innerHTML;
+                let nextHtml = currentHtml;
+
+                nextHtml = nextHtml.replace(/\.{6,}/g, "……");
+                nextHtml = nextHtml.replace(/\.{3,5}/g, "…");
+                nextHtml = nextHtml.replace(/\.\s\.\s\.\s\.\s\.\s\./g, "……");
+                nextHtml = nextHtml.replace(/\.\s\.\s\./g, "…");
+                nextHtml = nextHtml.replace(/\.\.\s\./g, "…");
+                nextHtml = nextHtml.replace(/\.\s\.\./g, "…");
+                nextHtml = nextHtml.replace(/\s+\?/g, "?").replace(/\s+\!/g, "!");
+                nextHtml = nextHtml.replace(/\s+\!\?/g, "!?").replace(/\s+\?\!/g, "?!");
+                nextHtml = nextHtml.replace(/“\s+/g, "“").replace(/\s+”/g, "”");
+                nextHtml = nextHtml.replace(/「\s+/g, "「").replace(/\s+」/g, "」");
+
+                if (currentHtml !== nextHtml) {
+                    m.innerHTML = nextHtml; m.setAttribute('data-orig-html', nextHtml); fixedCount++;
+                }
+            });
+
+            alert('총 ' + fixedCount + '개 단락 정돈 완료!');
+            updateLogStatistics();
+        });
+
+        roll20Container.addEventListener('click', function(e) {
+            if (e.target.classList.contains('action-del-btn')) {
+                e.stopPropagation();
+                saveHistoryState();
+                const msgNode = e.target.closest('.message');
+                if (msgNode) {
+                    msgNode.remove();
+                    updateCharacterList();
+                    updateLogStatistics();
+                }
+            }
+        });
 
         function refreshDeleteButtons() {
             roll20Container.querySelectorAll('.message').forEach(m => {
                 if (!m.querySelector('.action-del-btn')) {
                     const delBtn = document.createElement('span');
-                    delBtn.className = 'action-del-btn';
-                    delBtn.innerText = '×';
+                    delBtn.className = 'action-del-btn'; delBtn.innerText = '×';
                     delBtn.setAttribute('contenteditable', 'false');
-                    delBtn.onclick = function(e) {
-                        e.stopPropagation(); m.remove(); updateCharacterList();
-                    };
                     m.appendChild(delBtn);
                 }
             });
@@ -322,154 +635,110 @@
             });
             characterSelector.innerHTML = '<option value="">캐릭터 선택 (총 ' + names.size + '명)</option>';
             names.forEach(name => {
-                const opt = document.createElement('option');
-                opt.value = name; opt.innerText = name;
+                const opt = document.createElement('option'); opt.value = name; opt.innerText = name;
                 characterSelector.appendChild(opt);
             });
         }
 
-        // ─── 4번: 캐릭터 지정 삭제 (연속 그룹 전체) ─────────────────
-        // 타깃 화자의 메시지 + 뒤따르는 anonymous continuation (.by 없음)을
-        // 한 묶음으로 삭제. desc/system/다른 화자가 나오면 묶음 종료.
         btnDeleteCharMessages.addEventListener('click', function() {
             const targetName = characterSelector.value;
             if (!targetName) { alert('삭제할 캐릭터를 선택해 주세요.'); return; }
+            if (!confirm(`[${targetName}] 캐릭터가 말한 특정 스크립트만 1:1로 깔끔하게 삭제하시겠습니까?`)) return;
 
-            if (!confirm('[' + targetName + '] 캐릭터의 대사를 삭제할까요?\n연속으로 이어진 모든 단락을 함께 삭제합니다.')) return;
-
-            // 라이브 컬렉션 문제 방지: 스냅샷으로 고정
-            const allMsgs = Array.from(roll20Container.querySelectorAll('.message'));
+            saveHistoryState();
+            const allMsgs = roll20Container.querySelectorAll('.message');
             let deleteCount = 0;
-            let i = 0;
 
-            while (i < allMsgs.length) {
-                const node = allMsgs[i];
-
+            allMsgs.forEach(node => {
                 if (getSpeakerName(node) === targetName) {
-                    // 타깃 화자 발견 → 뒤 continuation까지 묶음 수집
-                    const toDelete = [node];
-                    let j = i + 1;
-                    while (j < allMsgs.length) {
-                        const next = allMsgs[j];
-                        // 차단 조건: desc/system 또는 새 화자(.by 있음)
-                        if (isBreaker(next)) break;
-                        if (!isAnonymousContinuation(next) &&
-                            !next.classList.contains('rollresult')) break;
-                        toDelete.push(next);
-                        j++;
-                    }
-                    toDelete.forEach(n => { n.remove(); deleteCount++; });
-                    i = j;
-                } else {
-                    i++;
+                    node.remove();
+                    deleteCount++;
                 }
-            }
-
-            alert('총 ' + deleteCount + '개의 대사 제거했습니다.');
-            updateCharacterList();
-        });
-
-        btnDeleteHidden.addEventListener('click', function() {
-            const targets = roll20Container.querySelectorAll('.message.hidden-message, .message.private');
-            if (targets.length === 0) { alert('제거할 메시지가 없습니다.'); return; }
-            if (confirm('숨김 메시지 ' + targets.length + '개를 삭제하시겠습니까?')) {
-                targets.forEach(t => t.remove()); updateCharacterList();
-            }
-        });
-
-        // [요구사항 3] 회색 통일 버튼 토글 스위치 작동 제어 제자리 복원
-        btnUnifyBg.addEventListener('click', function() {
-            flagBgUnified = !flagBgUnified;
-            if (flagBgUnified) {
-                roll20Container.classList.add('unify-bg-active');
-                btnUnifyBg.innerText = '회색 일괄 통일';
-                btnUnifyBg.classList.add('btn-toggle-active');
-            } else {
-                roll20Container.classList.remove('unify-bg-active');
-                btnUnifyBg.innerText = '원본 컬러 유지';
-                btnUnifyBg.classList.remove('btn-toggle-active');
-            }
-        });
-
-        logSearchInput.addEventListener('input', function(e) {
-            const val = e.target.value.trim().toLowerCase();
-            roll20Container.querySelectorAll('.message').forEach(m => {
-                if (!val || m.innerText.toLowerCase().includes(val)) m.classList.remove('search-filtered-out');
-                else m.classList.add('search-filtered-out');
             });
+
+            alert(`지정된 스크립트 대사 총 ${deleteCount}개를 안전하게 제거했습니다.`);
+            updateCharacterList();
+            updateLogStatistics();
         });
 
-        // [티스토리 안전 구조 추출 및 오버라이드 엔진]
+        btnOrigBg.addEventListener('click', function() {
+            flagBgUnified = false; roll20Container.classList.remove('unify-bg-active');
+            btnOrigBg.classList.add('btn-toggle-active'); btnUnifyBg.classList.remove('btn-toggle-active');
+        });
+
+        btnUnifyBg.addEventListener('click', function() {
+            flagBgUnified = true; roll20Container.classList.add('unify-bg-active');
+            btnUnifyBg.classList.add('btn-toggle-active'); btnOrigBg.classList.remove('btn-toggle-active');
+        });
+
+        document.getElementById('btnUndo').addEventListener('click', () => {
+            if (undoStack.length === 0) return;
+            isHistoryAction = true;
+            redoStack.push({ containerHTML: roll20Container.innerHTML, guideDisplay: uploadGuide.style.display, selectOptions: characterSelector.innerHTML });
+            const state = undoStack.pop();
+            roll20Container.innerHTML = state.containerHTML; uploadGuide.style.display = state.guideDisplay; characterSelector.innerHTML = state.selectOptions;
+            isHistoryAction = false; updateHistoryButtons(); refreshDeleteButtons(); updateLogStatistics();
+        });
+
+        document.getElementById('btnRedo').addEventListener('click', () => {
+            if (redoStack.length === 0) return;
+            isHistoryAction = true;
+            undoStack.push({ containerHTML: roll20Container.innerHTML, guideDisplay: uploadGuide.style.display, selectOptions: characterSelector.innerHTML });
+            const state = redoStack.pop();
+            roll20Container.innerHTML = state.containerHTML; uploadGuide.style.display = state.guideDisplay; characterSelector.innerHTML = state.selectOptions;
+            isHistoryAction = false; updateHistoryButtons(); refreshDeleteButtons(); updateLogStatistics();
+        });
+
+        document.getElementById('btnScrollTop').addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
         function copyOriginalLayoutHtml() {
-            if (!roll20Container.children.length) { alert('가공 처리할 로그 데이터가 없습니다.'); return; }
+            if (!roll20Container.children.length) { alert('로그 데이터가 없습니다.'); return; }
 
             const outWrapper = document.createElement('div');
-            outWrapper.className = 'content';
-            outWrapper.id = 'tistoryRoll20Wrapper';
+            outWrapper.className = 'content'; outWrapper.id = 'tistoryRoll20Wrapper';
             outWrapper.style.cssText = 'width: 100% !important; max-width: 100% !important; display: block !important;';
 
-            // 티스토리 글로벌 방어 스타일시트 동봉
             const embedStyle = document.createElement('style');
             embedStyle.innerText = `
                 #tistoryRoll20Wrapper, #tistoryRoll20Wrapper * { box-sizing: border-box !important; }
                 #tistoryRoll20Wrapper img { max-width: 100% !important; height: auto !important; }
                 #tistoryRoll20Wrapper .message { width: 100% !important; max-width: 100% !important; min-width: 100% !important; display: block !important; float: none !important; clear: both !important; }
-                
-                /* [요구사항 1] 티스토리 출력본에서도 구분선색 무조건 회색 강제 스크린 선언 */
                 #tistoryRoll20Wrapper .message .spacer { background-color: rgb(225, 225, 225) !important; border: none !important; }
-
-                /* 주사위 템플릿 크기 폭발 방지 가드레일 */
-                #tistoryRoll20Wrapper .sheet-rolltemplate, 
-                #tistoryRoll20Wrapper table, 
-                #tistoryRoll20Wrapper [class*="sheet-rolltemplate"] { 
-                    width: 100% !important; 
-                    max-width: 100% !important; 
-                    min-width: 0 !important; 
-                    table-layout: fixed !important; 
-                    display: table !important;
-                    box-sizing: border-box !important;
-                    overflow-wrap: break-word !important;
-                    word-break: break-word !important;
-                }
-                #tistoryRoll20Wrapper td, #tistoryRoll20Wrapper th { 
-                    width: auto !important; 
-                    max-width: 100% !important;
-                    overflow-wrap: break-word !important;
-                    word-break: break-word !important;
-                }
-                #tistoryRoll20Wrapper .message {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    box-sizing: border-box !important;
-                    overflow: hidden !important;
-                }
+                #tistoryRoll20Wrapper font[color="#aaaaaa"], #tistoryRoll20Wrapper font[color="rgb(170, 170, 170)"], #tistoryRoll20Wrapper .custom-gray-text { color: #aaaaaa !important; }
+                #tistoryRoll20Wrapper.unify-bg-active-tistory font[color="#aaaaaa"], #tistoryRoll20Wrapper.unify-bg-active-tistory font[color="rgb(170, 170, 170)"], #tistoryRoll20Wrapper.unify-bg-active-tistory .custom-gray-text { color: #666666 !important; }
+                #tistoryRoll20Wrapper .sheet-rolltemplate, #tistoryRoll20Wrapper table, #tistoryRoll20Wrapper [class*="sheet-rolltemplate"] { width: 100% !important; max-width: 100% !important; min-width: 0 !important; table-layout: fixed !important; display: table !important; box-sizing: border-box !important; overflow-wrap: break-word !important; word-break: break-word !important; }
+                #tistoryRoll20Wrapper td, #tistoryRoll20Wrapper th { width: auto !important; max-width: 100% !important; overflow-wrap: break-word !important; word-break: break-word !important; }
+                #tistoryRoll20Wrapper mark.search-highlight { background: transparent !important; color: inherit !important; box-shadow: none !important; padding: 0 !important; }
             `;
             outWrapper.appendChild(embedStyle);
 
+            if (flagBgUnified) { outWrapper.classList.add('unify-bg-active-tistory'); }
+
             Array.from(roll20Container.children).forEach(n => {
-                if (n.tagName === 'STYLE' || n.tagName === 'SCRIPT') return;
+                if (n.tagName === 'STYLE' || n.tagName === 'SCRIPT' || n.classList.contains('script-group-header')) return;
                 
                 const clone = n.cloneNode(true);
-                
-                // 에디터 기능 요소 세척
+                clone.querySelectorAll('mark.search-highlight').forEach(m => {
+                    const parent = m.parentNode;
+                    while (m.firstChild) parent.insertBefore(m.firstChild, m);
+                    m.remove();
+                });
+
                 const dBtn = clone.querySelector('.action-del-btn');
                 if (dBtn) dBtn.remove();
                 if (clone.removeAttribute) clone.removeAttribute('contenteditable');
+                if (clone.removeAttribute) clone.removeAttribute('data-orig-html');
 
-                // [요구사항 1] 추출되는 모든 노드의 구분선 강제 인라인 회색 매핑 고정
                 const targetSpacers = clone.querySelectorAll('.spacer');
-                targetSpacers.forEach(s => {
-                    s.style.setProperty('background-color', 'rgb(225, 225, 225)', 'important');
-                });
+                targetSpacers.forEach(s => { s.style.setProperty('background-color', 'rgb(225, 225, 225)', 'important'); });
 
-                // [요구사항 3] '회색 일괄 통일' 버튼 모드가 켜져 있을 때만 대사 상자 배경을 인라인으로 강제 변경
                 if (flagBgUnified && clone.classList && clone.classList.contains('message')) {
                     clone.style.setProperty('background-color', 'rgb(241, 241, 241)', 'important');
                     clone.style.setProperty('border-color', 'transparent', 'important');
                     clone.style.setProperty('box-shadow', 'none', 'important');
+                    clone.style.setProperty('color', '#000000', 'important');
                 }
 
-                // 주사위 인라인 가로폭 최적화 100% 보정 유지
                 const inlineTables = clone.querySelectorAll('.sheet-rolltemplate, table, [class*="sheet-rolltemplate"]');
                 inlineTables.forEach(t => {
                     t.style.cssText = "width: 100% !important; max-width: 100% !important; min-width: 0 !important; table-layout: fixed !important; display: table !important; box-sizing: border-box !important; overflow-wrap: break-word !important; word-break: break-word !important;";
@@ -487,8 +756,8 @@
             });
 
             navigator.clipboard.writeText(outWrapper.outerHTML).then(() => {
-                alert('복사 완료!');
-            }).catch(() => { alert('클립보드 접근 권한 제한으로 복사에 실패했습니다.'); });
+                alert('HTML 코드 복사 완료!');
+            }).catch(() => { alert('클립보드 권한 거부로 인해 복사에 실패했습니다.'); });
         }
 
         btnManualCopy.addEventListener('click', copyOriginalLayoutHtml);
